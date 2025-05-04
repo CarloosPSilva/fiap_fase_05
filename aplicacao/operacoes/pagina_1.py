@@ -49,7 +49,7 @@ def preprocess(text):
     text = text.lower()
     text = re.sub(r'\d+', '', text)
     text = text.translate(str.maketrans('', '', string.punctuation))
-    tokens = word_tokenize(text, language="portuguese")
+    tokens = word_tokenize(text)
     tokens = [
         word for word in tokens if word not in stop_words and len(word) > 2]
     return ' '.join(tokens)
