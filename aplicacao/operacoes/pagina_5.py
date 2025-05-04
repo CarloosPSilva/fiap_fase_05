@@ -7,103 +7,30 @@ from sklearn.cluster import KMeans
 import numpy as np
 import re
 
-from aplicacao.utils.preparar_candidatos_df import limpar_remuneracao, preparar_candidatos_df
+from aplicacao.utils.preparar_candidatos_df import preparar_candidatos_df
 
 
 @st.cache_data(show_spinner="Executando clusterização...")
 def clusterizar_candidatos(prospects_json, applicants_json):
+    _, _, candidatos_df = preparar_candidatos_df(prospects_json, applicants_json)
 
-    # Preparar dataframe de prospects
-    lista_prospects = []
-    for vaga_id, vaga_info in prospects_json.items():
-        titulo = vaga_info.get("titulo", "")
-        modalidade = vaga_info.get("modalidade", "")
-        for prospect in vaga_info.get("prospects", []):
-            prospect['titulo_vaga'] = titulo
-            prospect['modalidade'] = modalidade
-            lista_prospects.append(prospect)
-
-    prospects_df = pd.DataFrame(lista_prospects)
-
-    aprovados = [
-        "Aprovado",
-        "Contratado como Hunting",
-        "Contratado pela Decision",
-        "Proposta Aceita"
+    # ✅ Filtrar candidatos com dados genéricos
+    candidatos_df = candidatos_df[
+        (candidatos_df['nivel_academico'] != 'Não informado') &
+        (candidatos_df['nivel_ingles'] != 'Nenhum') &
+        (candidatos_df['nivel_espanhol'] != 'Nenhum')
     ]
-    prospects_df['situacao_candidado_agrupado'] = prospects_df['situacao_candidado'].apply(
-        lambda x: "Aprovado" if x in aprovados else x
-    )
 
-    lista_applicants = []
-    for codigo, dados in applicants_json.items():
-        # Remover valores vazios ou "Não informado" antes de criar o dicionário
-        infos_basicas = {
-            k: v for k, v in dados['infos_basicas'].items() if v and v != "Não informado"}
-        formacao = {k: v for k, v in dados['formacao_e_idiomas'].items(
-        ) if v and v != "Não informado"}
-        profissionais = {k: v for k, v in dados['informacoes_profissionais'].items(
-        ) if v and v != "Não informado"}
-
-        base = {
-            'codigo': infos_basicas.get('codigo_profissional', ''),
-            'nome': infos_basicas.get('nome', ''),
-            'email': infos_basicas.get('email', ''),
-            'local': infos_basicas.get('local', ''),
-            'nivel_academico': formacao.get('nivel_academico', ''),
-            'nivel_ingles': formacao.get('nivel_ingles', ''),
-            'nivel_espanhol': formacao.get('nivel_espanhol', ''),
-            'remuneracao': profissionais.get('remuneracao', ''),
-            'area_atuacao': profissionais.get('area_atuacao', ''),
-            'dados_completos': dados
-        }
-        # Remover valores vazios do dicionário base
-        base = {k: v for k, v in base.items() if v or k == 'codigo'}
-        lista_applicants.append(base)
-
-    applicants_df = pd.DataFrame(lista_applicants)
-    MAX_REGISTROS = 500
-    if len(applicants_df) > MAX_REGISTROS:
-        applicants_df = applicants_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
-
-    # Processamento de remuneração
-    applicants_df['remuneracao_limpa'] = applicants_df['remuneracao'].apply(
-        limpar_remuneracao)
-    applicants_df['remuneracao_limpa'] = pd.to_numeric(
-        applicants_df['remuneracao_limpa'], errors='coerce')
-
-    # Remover linhas com valores ausentes críticos para a clusterização
-    applicants_df = applicants_df.dropna(
-        subset=['nivel_academico', 'nivel_ingles', 'nivel_espanhol'])
-
-    # Preencher remuneração ausente apenas para candidatos com outros dados completos
-    mediana_salario = applicants_df['remuneracao_limpa'].median()
-    applicants_df['remuneracao_limpa'] = applicants_df['remuneracao_limpa'].fillna(
-        mediana_salario)
-
-    applicants_df['remuneracao_formatada'] = applicants_df['remuneracao_limpa'].apply(
-        lambda x: f"R$ {x:,.2f}".replace(
-            ",", "X").replace(".", ",").replace("X", ".")
-    )
-
-    applicants_df['remuneracao'] = applicants_df['remuneracao_limpa'].astype(
-        float)
-    applicants_df = applicants_df.drop('remuneracao_limpa', axis=1)
-
-    # Usar inner join para manter apenas candidatos com dados completos
-    candidatos_df = pd.merge(
-        prospects_df, applicants_df, on='codigo', how='inner')
+    # 🔒 Limitar amostragem para não sobrecarregar
+    MAX_REGISTROS = 100
+    if len(candidatos_df) > MAX_REGISTROS:
+        candidatos_df = candidatos_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
 
     # Clusterização
     df_cluster = candidatos_df[['codigo', 'nivel_academico',
-                                'nivel_ingles', 'nivel_espanhol', 'remuneracao']].copy()
+                                'nivel_ingles', 'nivel_espanhol', 'remuneracao']].copy().dropna()
 
-    # Remover linhas com valores ausentes (já tratado anteriormente, mas garantindo)
-    df_cluster = df_cluster.dropna()
-
-    # Criar dummies apenas para valores existentes
-    df_dummies = pd.get_dummies(df_cluster.drop(
-        columns=['codigo', 'remuneracao']))
+    df_dummies = pd.get_dummies(df_cluster.drop(columns=['codigo', 'remuneracao']))
     df_final = pd.concat([df_dummies, df_cluster[['remuneracao']]], axis=1)
 
     scaler = StandardScaler()
@@ -113,11 +40,12 @@ def clusterizar_candidatos(prospects_json, applicants_json):
     clusters = kmeans.fit_predict(X_scaled)
     df_cluster['cluster'] = clusters
 
-    candidatos_df = candidatos_df.merge(
-        df_cluster[['codigo', 'cluster']], on='codigo', how='left')
+    candidatos_df = candidatos_df.merge(df_cluster[['codigo', 'cluster']], on='codigo', how='left')
+
+    # Libera variáveis intermediárias (opcional)
+    del df_cluster, df_dummies, df_final, X_scaled
 
     return candidatos_df
-
 
 def clusterizacao_perfil_05(prospects_json, applicants_json):
     candidatos_df = clusterizar_candidatos(prospects_json, applicants_json)
@@ -126,7 +54,7 @@ def clusterizacao_perfil_05(prospects_json, applicants_json):
     st.markdown("**Observação:** Apenas candidatos com informações completas foram considerados na análise.")
 
     # 🔒 Limitar amostra de dados para performance
-    MAX_REGISTROS = 500
+    MAX_REGISTROS = 100
     if len(candidatos_df) > MAX_REGISTROS:
         candidatos_df = candidatos_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
         st.info(f"Atenção: foram carregados apenas {MAX_REGISTROS} candidatos de um total maior, para otimizar a performance.")

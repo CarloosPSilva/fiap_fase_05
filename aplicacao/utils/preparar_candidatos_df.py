@@ -75,10 +75,9 @@ def limpar_remuneracao(texto):
     return valor
 
 
-def preparar_candidatos_df():
-    vagas_df, prospects_df, applicants_df, prospects_json, applicants_json = carregar_base()
-    # if vagas_df.empty or not prospects_json or not applicants_json or not prospects_df:
-    #     raise ValueError("Algum dos arquivos JSON está vazio ou com erro de leitura.")
+def preparar_candidatos_df(prospects_json=None, applicants_json=None, vagas_df=None, prospects_df=None, applicants_df=None):
+    if not all([vagas_df, prospects_df, applicants_df, prospects_json, applicants_json]):
+        vagas_df, prospects_df, applicants_df, prospects_json, applicants_json = carregar_base()
 
     # Agrupar status de aprovação
     aprovados = [
@@ -91,7 +90,7 @@ def preparar_candidatos_df():
         lambda x: "Aprovado" if x in aprovados else x
     )
 
-    # Preparar dataframe de applicants (dados extras)
+    # Preparar dataframe de applicants
     lista_applicants = []
     for codigo, dados in applicants_json.items():
         base = {
@@ -108,15 +107,15 @@ def preparar_candidatos_df():
         }
         lista_applicants.append(base)
 
-    df_extra = pd.DataFrame(lista_applicants)
+    applicants_df = pd.DataFrame(lista_applicants)
 
     # Limpeza da coluna de remuneração
-    df_extra['remuneracao'] = df_extra['remuneracao'].apply(limpar_remuneracao)
-    df_extra['remuneracao'] = pd.to_numeric(df_extra['remuneracao'], errors='coerce')
-    mediana_salario = df_extra['remuneracao'].median()
-    df_extra['remuneracao'] = df_extra['remuneracao'].fillna(mediana_salario)
+    applicants_df['remuneracao'] = applicants_df['remuneracao'].apply(limpar_remuneracao)
+    applicants_df['remuneracao'] = pd.to_numeric(applicants_df['remuneracao'], errors='coerce')
+    mediana_salario = applicants_df['remuneracao'].median()
+    applicants_df['remuneracao'] = applicants_df['remuneracao'].fillna(mediana_salario)
 
     # Merge final
-    candidatos_df = pd.merge(prospects_df, df_extra, on='codigo', how='left')
+    candidatos_df = pd.merge(prospects_df, applicants_df, on='codigo', how='left')
 
-    return candidatos_df, vagas_df, prospects_json, applicants_json
+    return prospects_df, applicants_df, candidatos_df
