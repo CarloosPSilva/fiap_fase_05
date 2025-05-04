@@ -46,23 +46,18 @@ jobs, logreg, xgb, embedding_model, job_ids, job_titles, job_embeddings = load_m
 
 
 def preprocess(text):
-    """Pré-processamento de texto"""
     import re
     import string
     from nltk.corpus import stopwords
-    from nltk.tokenize import word_tokenize
 
-    # Carrega stopwords
     stop_words = set(stopwords.words('portuguese'))
 
-    # Limpeza do texto
     text = text.lower()
     text = re.sub(r'\d+', '', text)
     text = text.translate(str.maketrans('', '', string.punctuation))
 
-    # Tokenização e remoção de stopwords
-    tokens = word_tokenize(text)
-    tokens = [word for word in tokens if word not in stop_words and len(word) > 2]
+    # tokenização simples
+    tokens = [word for word in text.split() if word not in stop_words and len(word) > 2]
 
     return ' '.join(tokens)
 
