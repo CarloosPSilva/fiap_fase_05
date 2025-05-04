@@ -7,9 +7,6 @@ import shutil
 import matplotlib.pyplot as plt
 import zipfile
 
-# from utils import executar_notebook_papermill
-
-
 def garantir_dados_extraidos():
     caminho_zip = 'aplicacao/dados.zip'
     pasta_destino = 'aplicacao/dados'
@@ -83,4 +80,5 @@ def carregar_base():
 
     applicants_df = pd.DataFrame(applicants_list)
 
-    return vagas_df, prospects_json, applicants_json
+    # Novo retorno com os 5 elementos necessários
+    return vagas_df, prospects_df, applicants_df, prospects_json, applicants_json

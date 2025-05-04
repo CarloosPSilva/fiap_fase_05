@@ -6,13 +6,7 @@ from sklearn.preprocessing import StandardScaler
 import plotly.express as px
 import pandas as pd
 import streamlit as st
-import sys
-import os
 from aplicacao.utils.carregar_dados import carregar_base
-
-
-# Carregamento dos dados
-vagas_df, prospects_df, applicants_df = carregar_base()
 
 
 def limpar_remuneracao(texto):
@@ -82,19 +76,7 @@ def limpar_remuneracao(texto):
 
 
 def preparar_candidatos_df():
-    vagas_df, prospects_json, applicants_json = carregar_base()
-
-    # Preparar dataframe de prospects
-    lista_prospects = []
-    for vaga_id, vaga_info in prospects_json.items():
-        titulo = vaga_info.get("titulo", "")
-        modalidade = vaga_info.get("modalidade", "")
-        for prospect in vaga_info.get("prospects", []):
-            prospect['titulo_vaga'] = titulo
-            prospect['modalidade'] = modalidade
-            lista_prospects.append(prospect)
-
-    prospects_df = pd.DataFrame(lista_prospects)
+    vagas_df, prospects_df, applicants_df, prospects_json, applicants_json = carregar_base()
 
     # Agrupar status de aprovação
     aprovados = [
@@ -107,7 +89,7 @@ def preparar_candidatos_df():
         lambda x: "Aprovado" if x in aprovados else x
     )
 
-    # Preparar dataframe de applicants
+    # Preparar dataframe de applicants (dados extras)
     lista_applicants = []
     for codigo, dados in applicants_json.items():
         base = {
@@ -124,15 +106,15 @@ def preparar_candidatos_df():
         }
         lista_applicants.append(base)
 
-    applicants_df = pd.DataFrame(lista_applicants)
+    df_extra = pd.DataFrame(lista_applicants)
 
     # Limpeza da coluna de remuneração
-    applicants_df['remuneracao'] = applicants_df['remuneracao'].apply(limpar_remuneracao)
-    applicants_df['remuneracao'] = pd.to_numeric(applicants_df['remuneracao'], errors='coerce')
-    mediana_salario = applicants_df['remuneracao'].median()
-    applicants_df['remuneracao'] = applicants_df['remuneracao'].fillna(mediana_salario)
+    df_extra['remuneracao'] = df_extra['remuneracao'].apply(limpar_remuneracao)
+    df_extra['remuneracao'] = pd.to_numeric(df_extra['remuneracao'], errors='coerce')
+    mediana_salario = df_extra['remuneracao'].median()
+    df_extra['remuneracao'] = df_extra['remuneracao'].fillna(mediana_salario)
 
     # Merge final
-    candidatos_df = pd.merge(prospects_df, applicants_df, on='codigo', how='left')
+    candidatos_df = pd.merge(prospects_df, df_extra, on='codigo', how='left')
 
-    return candidatos_df,  vagas_df, prospects_json, applicants_json
+    return candidatos_df, vagas_df, prospects_json, applicants_json
