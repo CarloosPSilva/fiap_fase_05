@@ -1,72 +1,25 @@
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
-import numpy as np
-import re
 
-from aplicacao.utils.preparar_candidatos_df import preparar_candidatos_df
-
-
-@st.cache_data(show_spinner="Executando clusterização...")
-
-def clusterizar_candidatos(prospects_json, applicants_json):
-    candidatos_df, *_ = preparar_candidatos_df(prospects_json, applicants_json)
-
-    # ✅ Filtrar candidatos com dados genéricos
-    candidatos_df = candidatos_df[
-        (candidatos_df['nivel_academico'] != 'Não informado') &
-        (candidatos_df['nivel_ingles'] != 'Nenhum') &
-        (candidatos_df['nivel_espanhol'] != 'Nenhum')
-    ]
-
-    # 🔒 Limitar amostragem para não sobrecarregar
-    MAX_REGISTROS = 75
-    if len(candidatos_df) > MAX_REGISTROS:
-        candidatos_df = candidatos_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
-
-    # Clusterização
-    try:
-        df_cluster = candidatos_df[['codigo', 'nivel_academico',
-                                    'nivel_ingles', 'nivel_espanhol', 'remuneracao']].copy().dropna()
-
-        df_dummies = pd.get_dummies(
-            df_cluster.drop(columns=['codigo', 'remuneracao']),
-            drop_first=True  # Reduz número de colunas
-        )
-        df_final = pd.concat([df_dummies, df_cluster[['remuneracao']]], axis=1)
-
-        # Normalização leve
-        X_scaled = (df_final - df_final.mean()) / df_final.std()
-
-        kmeans = KMeans(n_clusters=3, random_state=42, n_init='auto')
-        clusters = kmeans.fit_predict(X_scaled)
-        df_cluster['cluster'] = clusters
-
-        candidatos_df = candidatos_df.merge(df_cluster[['codigo', 'cluster']], on='codigo', how='left')
-
-        # Libera variáveis intermediárias
-        del df_cluster, df_dummies, df_final, X_scaled
-
-    except Exception as e:
-        st.error(f"Erro durante a clusterização: {e}")
-        return pd.DataFrame()
-
-    return candidatos_df
-
-def clusterizacao_perfil_05(prospects_json, applicants_json):
-    candidatos_df = clusterizar_candidatos(prospects_json, applicants_json)
-
+def clusterizacao_perfil_05(candidatos_df: pd.DataFrame):
     st.title("Painel Clusterização de Perfis de Candidatos")
     st.markdown("**Observação:** Apenas candidatos com informações completas foram considerados na análise.")
 
     # 🔒 Limitar amostra de dados para performance
-    MAX_REGISTROS = 100
+    MAX_REGISTROS = 75
     if len(candidatos_df) > MAX_REGISTROS:
         candidatos_df = candidatos_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
         st.info(f"Atenção: foram carregados apenas {MAX_REGISTROS} candidatos de um total maior, para otimizar a performance.")
+
+    # 🔎 Verifica se há dados suficientes para a análise
+    if len(candidatos_df) < 30:
+        st.warning("Esta análise de clusters é exploratória e requer pelo menos 30 candidatos com dados completos.")
+        st.info(f"Atualmente, apenas {len(candidatos_df)} candidatos estão disponíveis com informações suficientes.")
+        return
 
     # Redução de dimensionalidade com PCA
     df_cluster = candidatos_df[['codigo', 'nivel_academico',
@@ -75,6 +28,7 @@ def clusterizacao_perfil_05(prospects_json, applicants_json):
     # Dummies e PCA
     df_dummies = pd.get_dummies(df_cluster.drop(columns=['codigo', 'remuneracao', 'cluster']))
     df_final = pd.concat([df_dummies, df_cluster[['remuneracao']]], axis=1)
+
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(df_final)
 

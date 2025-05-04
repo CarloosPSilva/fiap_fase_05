@@ -1,5 +1,9 @@
 from PIL import Image
 import streamlit as st
+import sys
+
+from aplicacao.operacoes.pagina_7 import recomendacao_07
+sys.modules["torch.classes"] = None
 
 # Configuração da página
 st.set_page_config(page_title="MVP IA - Recrutamento Decision", layout="wide")
@@ -11,11 +15,11 @@ from aplicacao.operacoes.pagina_3 import analise_vaga_03
 from aplicacao.operacoes.pagina_4 import analise_candidato_04
 from aplicacao.operacoes.pagina_5 import clusterizacao_perfil_05
 from aplicacao.operacoes.pagina_6 import consulta_candidato_profissional_06
-from aplicacao.operacoes.pagina_7 import recomendacao_07
+
 from aplicacao.utils.utils import style
-from aplicacao.utils.preparar_candidatos_df import preparar_candidatos_df
-import sys
-sys.modules["torch.classes"] = None
+
+from aplicacao.utils.preparar_candidatos_df import clusterizar_candidatos, preparar_candidatos_df
+
 # Estilo global
 style()
 
@@ -37,15 +41,19 @@ pagina = st.sidebar.selectbox("Selecione a página: ", [
     "📈 7. Recomendação e Insights"
 ], key="menu_principal")
 
-
 # ✅ Cache eficiente: só executa uma vez por sessão
 @st.cache_data(show_spinner="Carregando dados e preparando base...")
 def carregar_e_preparar():
     return preparar_candidatos_df()
 
+@st.cache_data(show_spinner="Executando clusterização...")
+def carregar_clusterizados(candidatos_df):
+    return clusterizar_candidatos(candidatos_df)
+
 # 🔃 Carregar dados uma única vez
 try:
     candidatos_df, vagas_df, prospects_json, applicants_json = carregar_e_preparar()
+    candidatos_clusterizados_df = carregar_clusterizados(candidatos_df)
 
     if pagina == "🔍 1. Predição de Aprovação":
         predicao_55()
@@ -60,13 +68,13 @@ try:
         analise_candidato_04(prospects_json)
 
     elif pagina == "🧬 5. Clusterização de Perfis":
-        clusterizacao_perfil_05(prospects_json, applicants_json)
+        clusterizacao_perfil_05(candidatos_clusterizados_df)
 
     elif pagina == "🔎 6. Consulta de Candidato":
         consulta_candidato_profissional_06(prospects_json, applicants_json, codigo_fixo="33404")
 
     elif pagina == "📈 7. Recomendação e Insights":
-        recomendacao_07(prospects_json, applicants_json)
+        recomendacao_07(candidatos_clusterizados_df)
 
 except Exception as e:
     st.error(f"Erro ao carregar dados ou renderizar a página: {e}")
