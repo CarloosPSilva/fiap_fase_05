@@ -1,9 +1,6 @@
 import re
 import numpy as np
 from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
-import plotly.express as px
 import pandas as pd
 import streamlit as st
 from aplicacao.utils.carregar_dados import carregar_base

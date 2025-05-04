@@ -1,10 +1,7 @@
-import papermill as pm
-import streamlit as st
 import pandas as pd
 import json
 import os
 import shutil
-import matplotlib.pyplot as plt
 import zipfile
 
 def garantir_dados_extraidos():
