@@ -12,6 +12,7 @@ from aplicacao.utils.preparar_candidatos_df import limpar_remuneracao, preparar_
 
 @st.cache_data(show_spinner="Executando clusterização...")
 def clusterizar_candidatos(prospects_json, applicants_json):
+
     # Preparar dataframe de prospects
     lista_prospects = []
     for vaga_id, vaga_info in prospects_json.items():
@@ -61,6 +62,9 @@ def clusterizar_candidatos(prospects_json, applicants_json):
         lista_applicants.append(base)
 
     applicants_df = pd.DataFrame(lista_applicants)
+    MAX_REGISTROS = 500
+    if len(applicants_df) > MAX_REGISTROS:
+        applicants_df = applicants_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
 
     # Processamento de remuneração
     applicants_df['remuneracao_limpa'] = applicants_df['remuneracao'].apply(
