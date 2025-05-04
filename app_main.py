@@ -39,11 +39,7 @@ pagina = st.sidebar.selectbox("Selecione a pagina: ", [
 ], key="menu_principal")
 
 # Carregamento de dados
-vagas_df, prospects_json, applicants_json = carregar_base()
-
-# Inicialização de variáveis globais
-if 'candidatos_df_clusterizado' not in st.session_state:
-    st.session_state['candidatos_df_clusterizado'] = None
+# vagas_df, prospects_json, applicants_json = carregar_base()
 
 # Direcionamento das páginas
 if pagina == "🔍 1. Predição de Aprovação":
