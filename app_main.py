@@ -39,7 +39,7 @@ pagina = st.sidebar.selectbox("Selecione a pagina: ", [
 ], key="menu_principal")
 
 # Carregamento de dados
-# vagas_df, prospects_json, applicants_json = carregar_base()
+vagas_df, prospects_json, applicants_json = carregar_base()
 
 # Direcionamento das páginas
 if pagina == "🔍 1. Predição de Aprovação":
