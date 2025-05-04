@@ -42,7 +42,7 @@ pagina = st.sidebar.selectbox(
 )
 
 # Carregamento de dados
-vagas_df, prospects_json, applicants_json = carregar_base()
+# vagas_df, prospects_json, applicants_json = carregar_base()
 
 # Inicialização de variáveis globais
 if 'candidatos_df_clusterizado' not in st.session_state:
@@ -55,21 +55,21 @@ if pagina == "🔍 1. Predição de Aprovação":
 elif pagina == "📊 2. Visão Geral":
     visao_geral_02()
 
-elif pagina == "📌 3. Análise de Vagas":
-    analise_vaga_03(vagas_df)
+# elif pagina == "📌 3. Análise de Vagas":
+#     analise_vaga_03(vagas_df)
 
-elif pagina == "🧑‍💼 4. Análise de Candidatos":
-    analise_candidato_04(prospects_json)
+# elif pagina == "🧑‍💼 4. Análise de Candidatos":
+#     analise_candidato_04(prospects_json)
 
-elif pagina == "🧬 5. Clusterização de Perfis":
-    candidatos_df = clusterizacao_perfil_05(prospects_json, applicants_json)
+# elif pagina == "🧬 5. Clusterização de Perfis":
+#     candidatos_df = clusterizacao_perfil_05(prospects_json, applicants_json)
 
-elif pagina == "🔎 6. Consulta de Candidato":
-    consulta_candidato_profissional_06(
-        prospects_json, applicants_json, codigo_fixo="33404")
+# elif pagina == "🔎 6. Consulta de Candidato":
+#     consulta_candidato_profissional_06(
+#         prospects_json, applicants_json, codigo_fixo="33404")
 
-elif pagina == "📈 7. Recomendação e Insights":
-    recomendacao_07(prospects_json, applicants_json)
+# elif pagina == "📈 7. Recomendação e Insights":
+#     recomendacao_07(prospects_json, applicants_json)
 
 
 st.sidebar.markdown("---")
