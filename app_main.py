@@ -2,7 +2,7 @@ from PIL import Image
 import streamlit as st
 st.set_page_config(page_title="MVP IA - Recrutamento Decision", layout="wide")
 
-from aplicacao.operacoes.pagina_1 import predicao_01
+from aplicacao.operacoes.pagina_1 import load_models
 from aplicacao.operacoes.pagina_2 import visao_geral_02
 from aplicacao.operacoes.pagina_3 import analise_vaga_03
 from aplicacao.operacoes.pagina_4 import analise_candidato_04
@@ -50,7 +50,7 @@ if 'candidatos_df_clusterizado' not in st.session_state:
 
 # Direcionamento das páginas
 if pagina == "🔍 1. Predição de Aprovação":
-    predicao_01()
+    load_models()
 
 elif pagina == "📊 2. Visão Geral":
     visao_geral_02()
