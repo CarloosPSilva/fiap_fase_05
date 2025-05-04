@@ -119,18 +119,21 @@ def clusterizacao_perfil_05(prospects_json, applicants_json):
     candidatos_df = clusterizar_candidatos(prospects_json, applicants_json)
 
     st.title("Painel Clusterização de Perfis de Candidatos")
-    st.markdown(
-        "**Observação:** Apenas candidatos com informações completas foram considerados na análise.")
+    st.markdown("**Observação:** Apenas candidatos com informações completas foram considerados na análise.")
+
+    # 🔒 Limitar amostra de dados para performance
+    MAX_REGISTROS = 500
+    if len(candidatos_df) > MAX_REGISTROS:
+        candidatos_df = candidatos_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
+        st.info(f"Atenção: foram carregados apenas {MAX_REGISTROS} candidatos de um total maior, para otimizar a performance.")
 
     # Redução de dimensionalidade com PCA
     df_cluster = candidatos_df[['codigo', 'nivel_academico',
                                 'nivel_ingles', 'nivel_espanhol', 'remuneracao', 'cluster']].dropna()
 
-    # Criar dummies apenas para valores existentes
-    df_dummies = pd.get_dummies(df_cluster.drop(
-        columns=['codigo', 'remuneracao', 'cluster']))
+    # Dummies e PCA
+    df_dummies = pd.get_dummies(df_cluster.drop(columns=['codigo', 'remuneracao', 'cluster']))
     df_final = pd.concat([df_dummies, df_cluster[['remuneracao']]], axis=1)
-
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(df_final)
 
@@ -142,13 +145,13 @@ def clusterizacao_perfil_05(prospects_json, applicants_json):
         'PC2': X_pca[:, 1],
         'cluster': df_cluster['cluster'].astype(str),
         'codigo': df_cluster['codigo'],
-        'remuneracao': df_cluster['remuneracao'].apply(lambda x: f"R$ {x:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")),
+        'remuneracao': df_cluster['remuneracao'].apply(
+            lambda x: f"R$ {x:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")),
         'nivel_academico': df_cluster['nivel_academico']
     })
 
     fig = px.scatter(
-        df_plot,
-        x='PC1', y='PC2',
+        df_plot, x='PC1', y='PC2',
         color='cluster',
         title="Clusters de Candidatos - Redução PCA",
         labels={'cluster': 'Cluster'},
@@ -171,25 +174,26 @@ def clusterizacao_perfil_05(prospects_json, applicants_json):
     }).reset_index()
 
     cluster_stats['Remuneração Média'] = cluster_stats['remuneracao'].apply(
-        lambda x: f"R$ {x:,.2f}".replace(
-            ",", "X").replace(".", ",").replace("X", ".")
-    )
+        lambda x: f"R$ {x:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
 
     st.dataframe(cluster_stats[['cluster', 'Remuneração Média', 'nivel_academico', 'nivel_ingles', 'nivel_espanhol']]
-                 .rename(columns={
-                     'cluster': 'Cluster',
-                     'nivel_academico': 'Nível Acadêmico',
-                     'nivel_ingles': 'Inglês',
-                     'nivel_espanhol': 'Espanhol'
-                 }))
+        .rename(columns={
+            'cluster': 'Cluster',
+            'nivel_academico': 'Nível Acadêmico',
+            'nivel_ingles': 'Inglês',
+            'nivel_espanhol': 'Espanhol'
+        })
+    )
 
-    st.markdown("### Detalhes dos Candidatos por Cluster")
+    st.markdown("### Detalhes dos Candidatos por Cluster (máx. 100 exibidos)")
+    st.caption("A tabela abaixo exibe apenas os primeiros 100 registros da amostra utilizada.")
     st.dataframe(df_cluster[['codigo', 'nivel_academico', 'nivel_ingles', 'nivel_espanhol', 'remuneracao', 'cluster']]
-                 .rename(columns={
-                     'codigo': 'Código',
-                     'nivel_academico': 'Nível Acadêmico',
-                     'nivel_ingles': 'Inglês',
-                     'nivel_espanhol': 'Espanhol',
-                     'remuneracao': 'Remuneração',
-                     'cluster': 'Cluster'
-                 }))
+        .rename(columns={
+            'codigo': 'Código',
+            'nivel_academico': 'Nível Acadêmico',
+            'nivel_ingles': 'Inglês',
+            'nivel_espanhol': 'Espanhol',
+            'remuneracao': 'Remuneração',
+            'cluster': 'Cluster'
+        }).head(100)
+    )
