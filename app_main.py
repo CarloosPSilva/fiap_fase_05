@@ -41,10 +41,15 @@ pagina = st.sidebar.selectbox("Selecione a página: ", [
     "📈 7. Recomendação e Insights"
 ], key="menu_principal")
 
-# ✅ Cache eficiente: só executa uma vez por sessão
 @st.cache_data(show_spinner="Carregando dados e preparando base...")
 def carregar_e_preparar():
-    return preparar_candidatos_df()
+    candidatos_df, vagas_df, prospects_json, applicants_json = preparar_candidatos_df()
+
+    # ⚠️ Remove o campo com dicts para evitar erro no cache
+    if 'dados_completos' in candidatos_df.columns:
+        candidatos_df = candidatos_df.drop(columns=['dados_completos'])
+
+    return candidatos_df, vagas_df, prospects_json, applicants_json
 
 @st.cache_data(show_spinner="Executando clusterização...")
 def carregar_clusterizados(candidatos_df):
