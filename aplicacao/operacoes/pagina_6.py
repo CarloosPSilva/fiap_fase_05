@@ -234,7 +234,8 @@ def exibir_historico_candidaturas(prospects_df, codigo_candidato):
             with st.container():
                 st.markdown(f"""
                 <div style='
-                    background-color:#f8f9fa;
+                    background-color: var(--background-color);
+                    color: var(--text-color);
                     padding: 15px;
                     border-radius: 8px;
                     margin-bottom: 15px;
@@ -297,8 +298,8 @@ def consulta_candidato_profissional_06(prospects_json, applicants_json, codigo_f
     # =====================
     st.markdown(f"""
     <div style='
-        background-color:#f0f2f6;
-        padding: 20px;
+        background-color: var(--background-color);
+        color: var(--text-color);
         border-radius: 10px;
         margin-bottom: 20px;
     '>
