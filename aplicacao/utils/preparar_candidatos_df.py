@@ -81,7 +81,9 @@ def limpar_remuneracao(texto):
     return valor
 
 
-def preparar_candidatos_df(prospects_json, applicants_json):
+def preparar_candidatos_df():
+    vagas_df, prospects_json, applicants_json = carregar_base()
+
     # Preparar dataframe de prospects
     lista_prospects = []
     for vaga_id, vaga_info in prospects_json.items():
@@ -124,16 +126,13 @@ def preparar_candidatos_df(prospects_json, applicants_json):
 
     applicants_df = pd.DataFrame(lista_applicants)
 
-    # Aplicar limpeza da coluna de remuneração
-    applicants_df['remuneracao'] = applicants_df['remuneracao'].apply(
-        limpar_remuneracao)
-    applicants_df['remuneracao'] = pd.to_numeric(
-        applicants_df['remuneracao'], errors='coerce')
+    # Limpeza da coluna de remuneração
+    applicants_df['remuneracao'] = applicants_df['remuneracao'].apply(limpar_remuneracao)
+    applicants_df['remuneracao'] = pd.to_numeric(applicants_df['remuneracao'], errors='coerce')
     mediana_salario = applicants_df['remuneracao'].median()
-    applicants_df['remuneracao'] = applicants_df['remuneracao'].fillna(
-        mediana_salario)
+    applicants_df['remuneracao'] = applicants_df['remuneracao'].fillna(mediana_salario)
 
     # Merge final
-    candidatos_df = pd.merge(
-        prospects_df, applicants_df, on='codigo', how='left')
-    return candidatos_df
+    candidatos_df = pd.merge(prospects_df, applicants_df, on='codigo', how='left')
+
+    return candidatos_df,  vagas_df, prospects_json, applicants_json

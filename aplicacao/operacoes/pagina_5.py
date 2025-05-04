@@ -7,7 +7,7 @@ from sklearn.cluster import KMeans
 import numpy as np
 import re
 
-from aplicacao.utils.preparar_candidatos_df import limpar_remuneracao
+from aplicacao.utils.preparar_candidatos_df import limpar_remuneracao, preparar_candidatos_df
 
 
 @st.cache_data(show_spinner="Executando clusterização...")
@@ -116,7 +116,7 @@ def clusterizar_candidatos(prospects_json, applicants_json):
 
 
 def clusterizacao_perfil_05(prospects_json, applicants_json):
-    candidatos_df = clusterizar_candidatos(prospects_json, applicants_json)
+    candidatos_df = preparar_candidatos_df()
 
     st.title("Painel Clusterização de Perfis de Candidatos")
     st.markdown(

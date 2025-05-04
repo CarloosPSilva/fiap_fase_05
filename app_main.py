@@ -1,6 +1,8 @@
 from PIL import Image
 import streamlit as st
 
+
+
 st.set_page_config(page_title="MVP IA - Recrutamento Decision", layout="wide")
 from aplicacao.operacoes.pagina_1 import predicao_55
 from aplicacao.operacoes.pagina_2 import visao_geral_02
@@ -10,6 +12,7 @@ from aplicacao.operacoes.pagina_5 import clusterizacao_perfil_05
 from aplicacao.operacoes.pagina_6 import consulta_candidato_profissional_06
 from aplicacao.operacoes.pagina_7 import recomendacao_07
 from aplicacao.utils.carregar_dados import carregar_base
+from aplicacao.utils.preparar_candidatos_df import preparar_candidatos_df
 from aplicacao.utils.utils import style
 
 
@@ -39,7 +42,7 @@ pagina = st.sidebar.selectbox("Selecione a pagina: ", [
 ], key="menu_principal")
 
 # Carregamento de dados
-vagas_df, prospects_json, applicants_json = carregar_base()
+candidatos_df, vagas_df, prospects_json, applicants_json = preparar_candidatos_df()
 
 # Direcionamento das páginas
 if pagina == "🔍 1. Predição de Aprovação":
