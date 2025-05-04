@@ -11,6 +11,7 @@ from aplicacao.utils.preparar_candidatos_df import preparar_candidatos_df
 
 
 @st.cache_data(show_spinner="Executando clusterização...")
+
 def clusterizar_candidatos(prospects_json, applicants_json):
     candidatos_df, *_ = preparar_candidatos_df(prospects_json, applicants_json)
 
@@ -22,28 +23,36 @@ def clusterizar_candidatos(prospects_json, applicants_json):
     ]
 
     # 🔒 Limitar amostragem para não sobrecarregar
-    MAX_REGISTROS = 100
+    MAX_REGISTROS = 75
     if len(candidatos_df) > MAX_REGISTROS:
         candidatos_df = candidatos_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
 
     # Clusterização
-    df_cluster = candidatos_df[['codigo', 'nivel_academico',
-                                'nivel_ingles', 'nivel_espanhol', 'remuneracao']].copy().dropna()
+    try:
+        df_cluster = candidatos_df[['codigo', 'nivel_academico',
+                                    'nivel_ingles', 'nivel_espanhol', 'remuneracao']].copy().dropna()
 
-    df_dummies = pd.get_dummies(df_cluster.drop(columns=['codigo', 'remuneracao']))
-    df_final = pd.concat([df_dummies, df_cluster[['remuneracao']]], axis=1)
+        df_dummies = pd.get_dummies(
+            df_cluster.drop(columns=['codigo', 'remuneracao']),
+            drop_first=True  # Reduz número de colunas
+        )
+        df_final = pd.concat([df_dummies, df_cluster[['remuneracao']]], axis=1)
 
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(df_final)
+        # Normalização leve
+        X_scaled = (df_final - df_final.mean()) / df_final.std()
 
-    kmeans = KMeans(n_clusters=3, random_state=42)
-    clusters = kmeans.fit_predict(X_scaled)
-    df_cluster['cluster'] = clusters
+        kmeans = KMeans(n_clusters=3, random_state=42, n_init='auto')
+        clusters = kmeans.fit_predict(X_scaled)
+        df_cluster['cluster'] = clusters
 
-    candidatos_df = candidatos_df.merge(df_cluster[['codigo', 'cluster']], on='codigo', how='left')
+        candidatos_df = candidatos_df.merge(df_cluster[['codigo', 'cluster']], on='codigo', how='left')
 
-    # Libera variáveis intermediárias (opcional)
-    del df_cluster, df_dummies, df_final, X_scaled
+        # Libera variáveis intermediárias
+        del df_cluster, df_dummies, df_final, X_scaled
+
+    except Exception as e:
+        st.error(f"Erro durante a clusterização: {e}")
+        return pd.DataFrame()
 
     return candidatos_df
 
