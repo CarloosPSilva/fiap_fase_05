@@ -26,15 +26,20 @@ st.sidebar.markdown(
     '<label class="sidebar-label"> Menu de Navegação</label>', unsafe_allow_html=True)
 
 # Menu lateral
-pagina = st.sidebar.selectbox("", [
-    "🔍 1. Predição de Aprovação",
-    "📊 2. Visão Geral",
-    "📌 3. Análise de Vagas",
-    "🧑‍💼 4. Análise de Candidatos",
-    "🧬 5. Clusterização de Perfis",
-    "🔎 6. Consulta de Candidato",
-    "📈 7. Recomendação e Insights"
-], key="menu_principal")
+pagina = st.sidebar.selectbox(
+    "Escolha uma página: ",
+    [
+        "🔍 1. Predição de Aprovação",
+        "📊 2. Visão Geral",
+        "📌 3. Análise de Vagas",
+        "🧑‍💼 4. Análise de Candidatos",
+        "🧬 5. Clusterização de Perfis",
+        "🔎 6. Consulta de Candidato",
+        "📈 7. Recomendação e Insights"
+    ],
+    key="menu_principal",
+    label_visibility="collapsed"
+)
 
 # Carregamento de dados
 vagas_df, prospects_json, applicants_json = carregar_base()
