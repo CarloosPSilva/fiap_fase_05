@@ -12,7 +12,7 @@ from aplicacao.utils.preparar_candidatos_df import preparar_candidatos_df
 
 @st.cache_data(show_spinner="Executando clusterização...")
 def clusterizar_candidatos(prospects_json, applicants_json):
-    _, _, candidatos_df = preparar_candidatos_df(prospects_json, applicants_json)
+    candidatos_df, *_ = preparar_candidatos_df(prospects_json, applicants_json)
 
     # ✅ Filtrar candidatos com dados genéricos
     candidatos_df = candidatos_df[

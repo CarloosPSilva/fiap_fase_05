@@ -118,4 +118,4 @@ def preparar_candidatos_df(prospects_json=None, applicants_json=None, vagas_df=N
     # Merge final
     candidatos_df = pd.merge(prospects_df, applicants_df, on='codigo', how='left')
 
-    return prospects_df, applicants_df, candidatos_df
+    return candidatos_df, vagas_df, prospects_json, applicants_json
