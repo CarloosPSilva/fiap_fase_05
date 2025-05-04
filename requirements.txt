@@ -102,7 +102,6 @@ pydeck==0.9.1
 pydot==3.0.4
 Pygments==2.19.1
 pymdown-extensions==10.15
-PyMuPDF==1.25.5
 pyparsing==3.2.3
 python-dateutil==2.9.0.post0
 pytz==2025.2
