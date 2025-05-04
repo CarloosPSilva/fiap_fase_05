@@ -20,23 +20,19 @@ warnings.simplefilter("ignore")
 # # == == == == == == == == == == == == == == == == == == == == == == ==
 
 
-
-@st.cache_resource
+# @st.cache_resource
 def load_models():
-    try:
-        with open("aplicacao/modelo/vagas.pkl", "rb") as f:
-            jobs = pickle.load(f)
+    """Carrega os modelos e dados necessários"""
+    with open("aplicacao/modelo/vagas.pkl", "rb") as f:
+        jobs = pickle.load(f)
 
-        logreg = joblib.load("aplicacao/modelo/logistic_model.pkl")
-        xgb = joblib.load("aplicacao/modelo/xgboost_model.pkl")
-        embedding_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
-        job_data = joblib.load("aplicacao/modelo/job_data.pkl")
+    logreg = joblib.load("aplicacao/modelo/logistic_model.pkl")
+    xgb = joblib.load("aplicacao/modelo/xgboost_model.pkl")
+    embedding_model = SentenceTransformer(
+        'paraphrase-multilingual-MiniLM-L12-v2')
 
-        return jobs, logreg, xgb, embedding_model, job_data["job_ids"], job_data["job_titles"], job_data["job_embeddings"]
-
-    except Exception as e:
-        st.error(f"Erro ao carregar modelos: {e}")
-        st.stop()
+    job_data = joblib.load("aplicacao/modelo/job_data.pkl")
+    return jobs, logreg, xgb, embedding_model, job_data["job_ids"], job_data["job_titles"], job_data["job_embeddings"]
 
 
 jobs, logreg, xgb, embedding_model, job_ids, job_titles, job_embeddings = load_models()
@@ -98,7 +94,7 @@ def extract_text_from_pdf(file):
 # ==============================================
 
 
-def predicao_01():
+def predicao_55():
 
     # Header moderno
     with st.container():
