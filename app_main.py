@@ -28,7 +28,7 @@ st.sidebar.markdown(
     '<label class="sidebar-label"> Menu de Navegação</label>', unsafe_allow_html=True)
 
 # Menu lateral
-pagina = st.sidebar.selectbox("", [
+pagina = st.sidebar.selectbox("Selecione a pagina: ", [
     "🔍 1. Predição de Aprovação",
     "📊 2. Visão Geral",
     "📌 3. Análise de Vagas",
