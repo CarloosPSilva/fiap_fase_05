@@ -9,24 +9,6 @@ import zipfile
 # from utils import executar_notebook_papermill
 
 
-def executar_notebooks_em_sequencia():
-    # 1. Executa o primeiro notebook (gera dados)
-    pm.execute_notebook(
-        input_path='datathon.ipynb',
-        output_path='datathon_output.ipynb',
-        kernel_name='python3'
-    )
-    print("✅ Primeiro notebook executado com sucesso.")
-
-    # 2. Executa o segundo notebook (gera modelo)
-    pm.execute_notebook(
-        input_path='model.ipynb',
-        output_path='model_output.ipynb',
-        kernel_name='python3'
-    )
-    print("✅ Segundo notebook executado com sucesso.")
-
-
 def garantir_dados_extraidos():
     caminho_zip = 'aplicacao/dados.zip'         # <- Aqui ajustado
     pasta_destino = 'aplicacao/dados'
