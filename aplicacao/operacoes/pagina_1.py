@@ -23,23 +23,19 @@ warnings.simplefilter("ignore")
 
 @st.cache_resource
 def load_models():
-    """Carrega os modelos e dados necessários"""
     try:
         with open("aplicacao/modelo/vagas.pkl", "rb") as f:
             jobs = pickle.load(f)
 
         logreg = joblib.load("aplicacao/modelo/logistic_model.pkl")
         xgb = joblib.load("aplicacao/modelo/xgboost_model.pkl")
-        embedding_model = SentenceTransformer(
-            'paraphrase-multilingual-MiniLM-L12-v2'
-        )
-
+        embedding_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
         job_data = joblib.load("aplicacao/modelo/job_data.pkl")
 
         return jobs, logreg, xgb, embedding_model, job_data["job_ids"], job_data["job_titles"], job_data["job_embeddings"]
 
     except Exception as e:
-        st.error(f"Erro ao carregar os modelos: {e}")
+        st.error(f"Erro ao carregar modelos: {e}")
         st.stop()
 
 
