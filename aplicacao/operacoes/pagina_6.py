@@ -249,7 +249,7 @@ def exibir_historico_candidaturas(prospects_df, codigo_candidato):
                 """, unsafe_allow_html=True)
 
 
-def consulta_candidato_profissional(prospects_json, applicants_json, codigo_fixo=None):
+def consulta_candidato_profissional_06(prospects_json, applicants_json, codigo_fixo=None):
     """
     Função principal para consulta profissional de candidatos
 

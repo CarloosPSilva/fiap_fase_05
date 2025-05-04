@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import json
 import os
+import shutil
 import matplotlib.pyplot as plt
 import zipfile
 
@@ -10,13 +11,15 @@ import zipfile
 
 
 def garantir_dados_extraidos():
-    caminho_zip = 'aplicacao/dados.zip'         # <- Aqui ajustado
+    caminho_zip = 'aplicacao/dados.zip'
     pasta_destino = 'aplicacao/dados'
 
-    if not os.path.exists(pasta_destino):
-        with zipfile.ZipFile(caminho_zip, 'r') as zip_ref:
-            zip_ref.extractall('aplicacao')  # vai criar aplicacao/dados
-        print("📦 Arquivos de dados extraídos com sucesso.")
+    if os.path.exists(pasta_destino):
+        shutil.rmtree(pasta_destino)
+
+    with zipfile.ZipFile(caminho_zip, 'r') as zip_ref:
+        zip_ref.extractall('aplicacao')
+    print("📦 Arquivos de dados extraídos com sucesso.")
 
 
 def carregar_base():

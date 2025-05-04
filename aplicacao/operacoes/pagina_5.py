@@ -115,7 +115,7 @@ def clusterizar_candidatos(prospects_json, applicants_json):
     return candidatos_df
 
 
-def clusterizacao_perfil(prospects_json, applicants_json):
+def clusterizacao_perfil_05(prospects_json, applicants_json):
     candidatos_df = clusterizar_candidatos(prospects_json, applicants_json)
 
     st.title("Painel Clusterização de Perfis de Candidatos")
