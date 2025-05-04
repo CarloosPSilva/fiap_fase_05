@@ -75,8 +75,8 @@ try:
     elif pagina == "🧬 5. Clusterização de Perfis":
         clusterizacao_perfil_05(candidatos_clusterizados_df)
 
-    elif pagina == "🔎 6. Consulta de Candidato":
-        consulta_candidato_profissional_06(prospects_json, applicants_json, codigo_fixo="33404")
+    # elif pagina == "🔎 6. Consulta de Candidato":
+    #     consulta_candidato_profissional_06(prospects_json, applicants_json, codigo_fixo="33404")
 
     elif pagina == "📈 7. Recomendação e Insights":
         recomendacao_07(candidatos_clusterizados_df)
