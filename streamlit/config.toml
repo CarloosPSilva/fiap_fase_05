@@ -1,0 +1,25 @@
+# Arquivo de configuração para o Streamlit
+
+[server]
+folderWatchBlacklist = ["torch"]
+runOnSave = false
+# # Força o Streamlit a não observar arquivos
+# fileWatcherType = "none"
+
+# Permite que o app rode em qualquer IP (útil para ambientes de nuvem)
+enableCORS = false
+headless = true
+port = 8501
+
+# [theme]
+# # Tema escuro como padrão (pode trocar para "light")
+# base = "dark"
+# primaryColor = "#1f77b4"
+# backgroundColor = "#0e1117"
+# secondaryBackgroundColor = "#262730"
+# textColor = "#fafafa"
+# font = "sans serif"
+
+[client]
+# Desativa o auto-scrolling para resultados longos
+toolbarMode = "minimal"

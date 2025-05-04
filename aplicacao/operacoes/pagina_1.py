@@ -10,8 +10,15 @@ from sklearn.metrics.pairwise import cosine_similarity
 from streamlit_extras.metric_cards import style_metric_cards
 
 # Configurações iniciais
-nltk.download('stopwords')
-nltk.download('punkt')
+try:
+    nltk.data.find("tokenizers/punkt")
+except LookupError:
+    nltk.download("punkt")
+
+try:
+    nltk.data.find("corpora/stopwords")
+except LookupError:
+    nltk.download("stopwords")
 warnings.simplefilter("ignore")
 
 
@@ -44,14 +51,19 @@ def preprocess(text):
     import string
     from nltk.corpus import stopwords
     from nltk.tokenize import word_tokenize
+
+    # Carrega stopwords
     stop_words = set(stopwords.words('portuguese'))
 
+    # Limpeza do texto
     text = text.lower()
     text = re.sub(r'\d+', '', text)
     text = text.translate(str.maketrans('', '', string.punctuation))
+
+    # Tokenização e remoção de stopwords
     tokens = word_tokenize(text)
-    tokens = [
-        word for word in tokens if word not in stop_words and len(word) > 2]
+    tokens = [word for word in tokens if word not in stop_words and len(word) > 2]
+
     return ' '.join(tokens)
 
 
