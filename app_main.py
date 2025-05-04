@@ -1,5 +1,6 @@
 from PIL import Image
 import streamlit as st
+st.set_page_config(page_title="MVP IA - Recrutamento Decision", layout="wide")
 
 from aplicacao.operacoes.pagina_1 import predicao_01
 from aplicacao.operacoes.pagina_2 import visao_geral_02
@@ -12,16 +13,13 @@ from aplicacao.utils.carregar_dados import carregar_base
 from aplicacao.utils.utils import style
 
 
-st.set_page_config(page_title="MVP IA - Recrutamento Decision", layout="wide")
 
-style()
 
 img = Image.open("aplicacao/imagens/p1.png")
-
 st.sidebar.image(img)
 
-# Título principal
 st.title(" MVP Inteligência Artificial para Recrutamento - Decision")
+style()
 
 # Menu lateral com emojis e nova ordem
 st.sidebar.markdown(
