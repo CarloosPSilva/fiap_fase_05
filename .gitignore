@@ -1,0 +1,37 @@
+# Ambiente virtual
+.venv/
+venv/
+
+# Cache do Python
+__pycache__/
+*/__pycache__/
+*.py[cod]
+
+# Arquivos temporários
+*.log
+*.tmp
+*.swp
+.DS_Store
+
+# Arquivos de Jupyter (caso use notebooks)
+.ipynb_checkpoints/
+
+# Arquivos compilados
+*.so
+*.dll
+*.dylib
+
+# Dados e modelos
+
+*.joblib
+*.csv
+*.json
+*.pdf
+
+# Diretórios específicos do projeto
+aplicacao/dados/*.json
+
+# Configurações locais do VS Code
+.vscode/
+__MACOSX/
+.DS_Store
