@@ -120,7 +120,7 @@ def predicao_55():
             uploaded_file = st.file_uploader(
                 "Arraste e solte seu arquivo PDF aqui ou clique para selecionar",
                 type=["pdf"],
-                label_visibility="collapsed"
+                label_visibility="visible"
             )
         with col2:
             st.markdown("""

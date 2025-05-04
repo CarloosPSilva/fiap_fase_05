@@ -77,6 +77,8 @@ def limpar_remuneracao(texto):
 
 def preparar_candidatos_df():
     vagas_df, prospects_df, applicants_df, prospects_json, applicants_json = carregar_base()
+    # if vagas_df.empty or not prospects_json or not applicants_json or not prospects_df:
+    #     raise ValueError("Algum dos arquivos JSON está vazio ou com erro de leitura.")
 
     # Agrupar status de aprovação
     aprovados = [

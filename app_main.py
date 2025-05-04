@@ -14,7 +14,8 @@ from aplicacao.operacoes.pagina_6 import consulta_candidato_profissional_06
 from aplicacao.operacoes.pagina_7 import recomendacao_07
 from aplicacao.utils.utils import style
 from aplicacao.utils.preparar_candidatos_df import preparar_candidatos_df
-
+import sys
+sys.modules["torch.classes"] = None
 # Estilo global
 style()
 
