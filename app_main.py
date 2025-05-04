@@ -36,9 +36,9 @@ pagina = st.sidebar.selectbox("Selecione a página: ", [
     "📊 2. Visão Geral",
     "📌 3. Análise de Vagas",
     "🧑‍💼 4. Análise de Candidatos",
-    "🧬 5. Clusterização de Perfis",
-    "🔎 6. Consulta de Candidato",
-    "📈 7. Recomendação e Insights"
+    # "🧬 5. Clusterização de Perfis",
+    # "🔎 6. Consulta de Candidato",
+    # "📈 7. Recomendação e Insights"
 ], key="menu_principal")
 
 @st.cache_data(show_spinner="Carregando dados e preparando base...")
@@ -51,14 +51,14 @@ def carregar_e_preparar():
 
     return candidatos_df, vagas_df, prospects_json, applicants_json
 
-@st.cache_data(show_spinner="Executando clusterização...")
-def carregar_clusterizados(candidatos_df):
-    return clusterizar_candidatos(candidatos_df)
+# @st.cache_data(show_spinner="Executando clusterização...")
+# def carregar_clusterizados(candidatos_df):
+#     return clusterizar_candidatos(candidatos_df)
 
 # 🔃 Carregar dados uma única vez
 try:
-    candidatos_df, vagas_df, prospects_json, applicants_json = carregar_e_preparar()
-    candidatos_clusterizados_df = carregar_clusterizados(candidatos_df)
+    _, vagas_df, prospects_json, applicants_json = carregar_e_preparar()
+    # candidatos_clusterizados_df = carregar_clusterizados(candidatos_df)
 
     if pagina == "🔍 1. Predição de Aprovação":
         predicao_55()
@@ -72,14 +72,14 @@ try:
     elif pagina == "🧑‍💼 4. Análise de Candidatos":
         analise_candidato_04(prospects_json)
 
-    elif pagina == "🧬 5. Clusterização de Perfis":
-        clusterizacao_perfil_05(candidatos_clusterizados_df)
+    # elif pagina == "🧬 5. Clusterização de Perfis":
+    #     clusterizacao_perfil_05(candidatos_clusterizados_df)
 
     # elif pagina == "🔎 6. Consulta de Candidato":
-    #     consulta_candidato_profissional_06(prospects_json, applicants_json, codigo_fixo="33404")
+    # #     consulta_candidato_profissional_06(prospects_json, applicants_json, codigo_fixo="33404")
 
-    elif pagina == "📈 7. Recomendação e Insights":
-        recomendacao_07(candidatos_clusterizados_df)
+    # elif pagina == "📈 7. Recomendação e Insights":
+    #     recomendacao_07(candidatos_clusterizados_df)
 
 except Exception as e:
     st.error(f"Erro ao carregar dados ou renderizar a página: {e}")
