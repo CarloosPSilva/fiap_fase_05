@@ -60,22 +60,8 @@ def carregar_base():
     with open(path_applicants, "r", encoding="utf-8") as f:
         applicants_json = json.load(f)
 
-    applicants_list = []
-    for codigo, dados in applicants_json.items():
-        row = {
-            'codigo': dados.get('infos_basicas', {}).get('codigo_profissional', ''),
-            'local': dados.get('infos_basicas', {}).get('local', ''),
-            'skills': dados.get('informacoes_profissionais', {}).get('skills', ''),
-            'nivel_academico': dados.get('formacao_e_idiomas', {}).get('nivel_academico', ''),
-            'nivel_ingles': dados.get('formacao_e_idiomas', {}).get('nivel_ingles', ''),
-            'nivel_espanhol': dados.get('formacao_e_idiomas', {}).get('nivel_espanhol', ''),
-            'area_atuacao': dados.get('informacoes_profissionais', {}).get('area_atuacao', ''),
-            'remuneracao': dados.get('informacoes_profissionais', {}).get('remuneracao', ''),
-            'job_id': dados.get('job_id', ''),
-        }
-        applicants_list.append(row)
+    # Apenas retorna o JSON, o DataFrame não é mais necessário se não for usado
+    applicants_df = pd.DataFrame()  # Placeholder vazio, se não utilizado
 
-    applicants_df = pd.DataFrame(applicants_list)
-
-    # Novo retorno com os 5 elementos necessários
+    # ✅ Retorno completo e compatível com `preparar_candidatos_df()`
     return vagas_df, prospects_df, applicants_df, prospects_json, applicants_json

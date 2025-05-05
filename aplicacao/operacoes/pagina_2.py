@@ -50,9 +50,7 @@ def visao_geral_02():
     - 🔍 **Página 1:** Envie seu currículo em PDF e veja as vagas mais compatíveis com base em IA
     - 📊 **Página 2:** Visão geral estatística das vagas
     - 🧑‍💼 **Página 3:** Perfil dos candidatos recebidos
-    - 🧬 **Página 4:** Agrupamento de perfis semelhantes
-    - 🔎 **Página 5:** Consulta detalhada por candidato
-    - 📈 **Página 6:** Recomendação e insights por histórico
+    - 📈 **Página 4:** Recomendação e insights baseados no histórico de aprovações
 
     ---
     Desenvolvido com foco em aplicabilidade real e geração de valor para recrutamento inteligente.

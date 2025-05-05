@@ -74,9 +74,10 @@ def limpar_remuneracao(texto):
 
 
 
-def preparar_candidatos_df(prospects_json=None, applicants_json=None, vagas_df=None, prospects_df=None, applicants_df=None):
-    if not all([vagas_df, prospects_df, applicants_df, prospects_json, applicants_json]):
-        vagas_df, prospects_df, applicants_df, prospects_json, applicants_json = carregar_base()
+def preparar_candidatos_df(prospects_json=None, vagas_df=None, prospects_df=None):
+    if not all([vagas_df, prospects_df, prospects_json]):
+        # Ajustado para ignorar apenas o que não será usado
+        vagas_df, prospects_df, _, prospects_json, _ = carregar_base()
 
     # Agrupar status de aprovação
     aprovados = [
@@ -89,64 +90,37 @@ def preparar_candidatos_df(prospects_json=None, applicants_json=None, vagas_df=N
         lambda x: "Aprovado" if x in aprovados else x
     )
 
-    # Preparar applicants
-    lista_applicants = []
-    for codigo, dados in applicants_json.items():
-        lista_applicants.append({
-            'codigo': dados['infos_basicas'].get('codigo_profissional', ''),
-            'nome': dados['infos_basicas'].get('nome', ''),
-            'email': dados['infos_basicas'].get('email', ''),
-            'local': dados['infos_basicas'].get('local', ''),
-            'nivel_academico': dados['formacao_e_idiomas'].get('nivel_academico', '') or 'Não informado',
-            'nivel_ingles': dados['formacao_e_idiomas'].get('nivel_ingles', '') or 'Nenhum',
-            'nivel_espanhol': dados['formacao_e_idiomas'].get('nivel_espanhol', '') or 'Nenhum',
-            'remuneracao': dados['informacoes_profissionais'].get('remuneracao', ''),
-            'area_atuacao': dados['informacoes_profissionais'].get('area_atuacao', '') or 'Não informado',
-            'dados_completos': dados
-        })
+    return vagas_df, prospects_df, prospects_json
 
-    applicants_df = pd.DataFrame(lista_applicants)
+# def clusterizar_candidatos(candidatos_df):
+#     # ✅ Filtrar candidatos com dados válidos
+#     candidatos_df = candidatos_df[
+#         (candidatos_df['nivel_academico'] != 'Não informado') &
+#         (candidatos_df['nivel_ingles'] != 'Nenhum') &
+#         (candidatos_df['nivel_espanhol'] != 'Nenhum')
+#     ].dropna(subset=['remuneracao'])
 
-    # Tratamento da remuneração
-    applicants_df['remuneracao'] = applicants_df['remuneracao'].apply(limpar_remuneracao)
-    applicants_df['remuneracao'] = pd.to_numeric(applicants_df['remuneracao'], errors='coerce')
-    applicants_df['remuneracao'].fillna(applicants_df['remuneracao'].median(), inplace=True)
+#     # 🔒 Amostragem para performance
+#     MAX_REGISTROS = 75
+#     if len(candidatos_df) > MAX_REGISTROS:
+#         candidatos_df = candidatos_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
 
-    # Merge
-    candidatos_df = pd.merge(prospects_df, applicants_df, on='codigo', how='left')
+#     try:
+#         # Base para cluster
+#         df_cluster = candidatos_df[['codigo', 'nivel_academico', 'nivel_ingles', 'nivel_espanhol', 'remuneracao']].copy()
 
-    return candidatos_df, vagas_df, prospects_json, applicants_json
+#         df_dummies = pd.get_dummies(df_cluster.drop(columns=['codigo', 'remuneracao']), drop_first=True)
+#         df_final = pd.concat([df_dummies, df_cluster[['remuneracao']]], axis=1)
+#         X_scaled = (df_final - df_final.mean()) / df_final.std()
 
+#         kmeans = KMeans(n_clusters=3, random_state=42, n_init='auto')
+#         df_cluster['cluster'] = kmeans.fit_predict(X_scaled)
 
-def clusterizar_candidatos(candidatos_df):
-    # ✅ Filtrar candidatos com dados válidos
-    candidatos_df = candidatos_df[
-        (candidatos_df['nivel_academico'] != 'Não informado') &
-        (candidatos_df['nivel_ingles'] != 'Nenhum') &
-        (candidatos_df['nivel_espanhol'] != 'Nenhum')
-    ].dropna(subset=['remuneracao'])
+#         # Merge no original
+#         candidatos_df = candidatos_df.merge(df_cluster[['codigo', 'cluster']], on='codigo', how='left')
 
-    # 🔒 Amostragem para performance
-    MAX_REGISTROS = 75
-    if len(candidatos_df) > MAX_REGISTROS:
-        candidatos_df = candidatos_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
+#     except Exception as e:
+#         st.error(f"Erro durante a clusterização: {e}")
+#         return pd.DataFrame()
 
-    try:
-        # Base para cluster
-        df_cluster = candidatos_df[['codigo', 'nivel_academico', 'nivel_ingles', 'nivel_espanhol', 'remuneracao']].copy()
-
-        df_dummies = pd.get_dummies(df_cluster.drop(columns=['codigo', 'remuneracao']), drop_first=True)
-        df_final = pd.concat([df_dummies, df_cluster[['remuneracao']]], axis=1)
-        X_scaled = (df_final - df_final.mean()) / df_final.std()
-
-        kmeans = KMeans(n_clusters=3, random_state=42, n_init='auto')
-        df_cluster['cluster'] = kmeans.fit_predict(X_scaled)
-
-        # Merge no original
-        candidatos_df = candidatos_df.merge(df_cluster[['codigo', 'cluster']], on='codigo', how='left')
-
-    except Exception as e:
-        st.error(f"Erro durante a clusterização: {e}")
-        return pd.DataFrame()
-
-    return candidatos_df
+#     return candidatos_df

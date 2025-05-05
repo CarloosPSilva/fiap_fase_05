@@ -1,12 +1,10 @@
-
 import streamlit as st
-
 
 def style():
     st.markdown(
         """
         <style>
-        /* ===================== TEMA CLARO ===================== */
+        /* ========== TEMA CLARO ========== */
         @media (prefers-color-scheme: light) {
             [data-testid="stSidebar"] {
                 background-color: #F3F2EF !important;
@@ -36,26 +34,23 @@ def style():
                 font-weight: bold;
             }
 
-            div[data-testid="stMetricLabel"] {
-                color: #333 !important;
-                font-size: 16px !important;
-                font-weight: 500 !important;
+            div[data-testid="stMetric"] {
+                background-color: #ffffff !important;
+                border-radius: 0.5rem;
+                padding: 1rem;
+                border: 1px solid #ccc;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             }
 
-            .element-container:has(div[data-testid="stNotification"]) {
-                color: #1D2226 !important;
-            }
-            .left-align-header {
-            text-align: left !important;
-            font-size: 1.5rem !important;
-            font-weight: 600 !important;
-            color: #0A66C2 !important;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
+            div[data-testid="metric-container"] {
+                background-color: #ffffff !important;
+                padding: 16px;
+                border-radius: 8px;
+                border: 1px solid #ccc;
             }
         }
 
-        /* ===================== TEMA ESCURO ===================== */
+        /* ========== TEMA ESCURO ========== */
         @media (prefers-color-scheme: dark) {
             [data-testid="stSidebar"] {
                 background-color: #1E1E1E !important;
@@ -76,14 +71,16 @@ def style():
                 text-align: center !important;
             }
 
-
             .stDataFrame td, .stDataFrame th {
                 color: white !important;
             }
 
-            div[data-testid="stMetricValue"] {
-                color: #60AFFF !important;
-                font-weight: bold;
+            div[data-testid="stMetric"] {
+                background-color: #2C2C2C !important;
+                border-radius: 0.5rem;
+                padding: 1rem;
+                border: 1px solid #444;
+                box-shadow: 0 2px 8px rgba(255,255,255,0.05);
             }
 
             div[data-testid="stMetricLabel"] {
@@ -92,18 +89,24 @@ def style():
                 font-weight: 500 !important;
             }
 
+            div[data-testid="metric-container"] {
+                background-color: #222 !important;
+                padding: 16px;
+                border-radius: 8px;
+                border: 1px solid #444;
+            }
+
             .element-container:has(div[data-testid="stNotification"]) {
                 color: white !important;
             }
 
-            /* Ajuste para o card azul de dicas */
             .st-emotion-cache-1avcm0n {
                 color: #EAF6FF !important;
                 font-weight: 500;
             }
         }
 
-        /* ===================== ESTILOS COMUNS ===================== */
+        /* ========== ESTILOS COMUNS ========== */
         .sidebar-label {
             font-size: 25px !important;
             font-weight: bold;

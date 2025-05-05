@@ -101,51 +101,56 @@ def extract_text_from_pdf(file):
 # ==============================================
 
 
-def predicao_55():
-
-    # Header moderno
-    with st.container():
-        st.markdown("""
-        <div class="header-container">
-            <h3 class="header-text"> Encontre as vagas perfeitas com inteligência artificial</h1>
-
-        </div>
-        """, unsafe_allow_html=True)
-
-    # Seção de upload
-    with st.container():
-        st.markdown("####  Envie seu currículo")
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            uploaded_file = st.file_uploader(
-                "Arraste e solte seu arquivo PDF aqui ou clique para selecionar",
-                type=["pdf"],
-                label_visibility="visible"
-            )
-        with col2:
+def predicao_1():
+        # Header moderno
+        with st.container():
             st.markdown("""
-            <div style="background-color: #e3f2fd; padding: 1rem; border-radius: 10px;">
-                <p style="margin: 0; font-size: 0.9rem; color: black;">
-                    📌 <strong>Dica:</strong> Seu currículo deve estar em formato PDF e conter informações claras sobre suas habilidades e experiências.
-                </p>
+            <div class="header-container">
+                <h3 class="header-text"> Encontre as vagas perfeitas com inteligência artificial</h3>
             </div>
             """, unsafe_allow_html=True)
 
-    if uploaded_file:
-        with st.spinner('Analisando seu currículo...'):
-            cv_text = extract_text_from_pdf(uploaded_file)
-
-            if not cv_text.strip():
-                st.error("""
-                <div style="background-color: #ffebee; padding: 1rem; border-left: 5px solid #f44336; border-radius: 5px;">
-                    ⚠️ Não foi possível extrair texto do PDF. Verifique se o arquivo não está vazio ou protegido.
+        # Seção de upload
+        with st.container():
+            st.markdown("####  Envie seu currículo")
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                uploaded_file = st.file_uploader(
+                    "Arraste e solte seu arquivo PDF aqui ou clique para selecionar",
+                    type=["pdf"],
+                    label_visibility="visible"
+                )
+            with col2:
+                st.markdown("""
+                <div style="background-color: #e3f2fd; padding: 1rem; border-radius: 10px;">
+                    <p style="margin: 0; font-size: 0.9rem; color: black;">
+                        📌 <strong>Dica:</strong> Seu currículo deve estar em formato PDF e conter informações claras sobre suas habilidades e experiências.
+                    </p>
                 </div>
                 """, unsafe_allow_html=True)
-                return
 
-            df_recomendacoes = predict_jobs_for_cv(cv_text)
+        if uploaded_file:
+            with st.spinner('Analisando seu currículo...'):
+                cv_text = extract_text_from_pdf(uploaded_file)
 
-            # Seção de resultados
+                if not cv_text.strip():
+                    st.error("""
+                    <div style="background-color: #ffebee; padding: 1rem; border-left: 5px solid #f44336; border-radius: 5px;">
+                        ⚠️ Não foi possível extrair texto do PDF. Verifique se o arquivo não está vazio ou protegido.
+                    </div>
+                    """, unsafe_allow_html=True)
+                    return
+
+                df_recomendacoes = predict_jobs_for_cv(cv_text)
+
+                # Salvar em sessão
+                st.session_state['cv_text'] = cv_text
+                st.session_state['df_recomendacoes'] = df_recomendacoes
+
+        # Exibe resultados se já estiverem no session_state
+        if 'df_recomendacoes' in st.session_state:
+            df_recomendacoes = st.session_state['df_recomendacoes']
+
             st.markdown("""
             <div class="success-box">
                 ✅ Análise concluída com sucesso! Veja abaixo as vagas que melhor se encaixam no seu perfil.
@@ -159,41 +164,26 @@ def predicao_55():
             col1, col2, col3 = st.columns(3)
 
             with col1:
-                avg_prob = df_recomendacoes["probabilidade_de_contratacao"].mean(
-                )
-                st.markdown("""
-                <div style="background-color: #e3f2fd; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 5px;">
-                    <p style="margin: 0; font-size: 0.9rem; color: black;">
-                        📈 <strong>Probabilidade Média</strong>
-                    </p>
-                </div>
-                """, unsafe_allow_html=True)
-                st.metric(label="", value=f"{avg_prob:.1%}",
-                          help="Média das probabilidades de contratação para as vagas recomendadas")
+                avg_prob = df_recomendacoes["probabilidade_de_contratacao"].mean()
+                st.markdown("""<div style="background-color: #e3f2fd; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 5px;">
+                    <p style="margin: 0; font-size: 0.9rem; color: black;">📈 <strong>Probabilidade Média</strong></p>
+                </div>""", unsafe_allow_html=True)
+                st.metric(label="", value=f"{avg_prob:.1%}")
 
             with col2:
                 best_match = df_recomendacoes["similaridade"].max()
-                st.markdown("""
-                <div style="background-color: #e3f2fd; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 5px;">
-                    <p style="margin: 0; font-size: 0.9rem; color: black;">
-                        🔍 <strong>Melhor Match</strong>
-                    </p>
-                </div>
-                """, unsafe_allow_html=True)
-                st.metric(label="", value=f"{best_match:.1%}",
-                          help="Similaridade com a vaga que melhor se encaixa no seu perfil")
+                st.markdown("""<div style="background-color: #e3f2fd; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 5px;">
+                    <p style="margin: 0; font-size: 0.9rem; color: black;">🔍 <strong>Melhor Match</strong></p>
+                </div>""", unsafe_allow_html=True)
+                st.metric(label="", value=f"{best_match:.1%}")
 
             with col3:
                 top_area = df_recomendacoes["area"].mode()[0]
-                st.markdown("""
-                <div style="background-color: #e3f2fd; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 5px;">
-                    <p style="margin: 0; font-size: 0.9rem; color: black;">
-                        🧭 <strong>Área com Mais Oportunidades</strong>
-                    </p>
-                </div>
-                """, unsafe_allow_html=True)
-                st.metric(label="", value=top_area,
-                          help="Área profissional com maior número de vagas compatíveis")
+                st.markdown("""<div style="background-color: #e3f2fd; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 5px;">
+                    <p style="margin: 0; font-size: 0.9rem; color: black;">🧭 <strong>Área com Mais Oportunidades</strong></p>
+                </div>""", unsafe_allow_html=True)
+                st.metric(label="", value=top_area)
+
             style_metric_cards()
 
             # Top vagas

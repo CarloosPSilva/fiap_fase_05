@@ -2,30 +2,37 @@ import streamlit as st
 import plotly.express as px
 from streamlit_extras.metric_cards import style_metric_cards
 
-
 def analise_vaga_03(vagas_df):
-    # Configuração do layout da página
-    # st.set_page_config(layout="wide")
-
-    # Título e introdução
     st.title("Painel de Análise de Vagas")
-    st.markdown("""
-    <style>
-    .main {
-        padding: 2rem;
-    }
-    .stMetric {
-        border-radius: 0.5rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .css-1v0mbdj {
-        border-radius: 0.5rem;
-    }
 
-    </style>
-    """, unsafe_allow_html=True)
+    # Estilo local para cards do st.metric
+    style_metric_cards()
 
-    # Seção de filtros com layout expandido
+    # Ajuste visual dos cards para tema claro e escuro
+    # st.markdown("""
+    # <style>
+    # @media (prefers-color-scheme: dark) {
+    #     div[data-testid="stMetric"] {
+    #         background-color: #2C2C2C !important;
+    #         border-radius: 0.5rem;
+    #         padding: 1rem;
+    #         box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
+    #         border: 1px solid #444;
+    #     }
+    # }
+
+    # @media (prefers-color-scheme: light) {
+    #     div[data-testid="stMetric"] {
+    #         background-color: #FFFFFF !important;
+    #         border-radius: 0.5rem;
+    #         padding: 1rem;
+    #         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    #         border: 1px solid #DDD;
+    #     }
+    # }
+    # </style>
+    # """, unsafe_allow_html=True)
+
     with st.expander(" Filtros Avançados", expanded=True):
         col1, col2 = st.columns(2)
 
@@ -43,13 +50,11 @@ def analise_vaga_03(vagas_df):
                 key="tipo_contratacao_vagas"
             )
 
-    # Aplicar filtros
     vagas_filtradas = vagas_df[
         (vagas_df['informacoes_basicas_cliente'] == cliente) &
         (vagas_df['informacoes_basicas_tipo_contratacao'] == tipo_contratacao)
     ]
 
-    # Métricas resumidas
     st.markdown("###  Visão Geral")
     col1, col2, col3 = st.columns(3)
 
@@ -63,22 +68,13 @@ def analise_vaga_03(vagas_df):
     with col2:
         nivel_mais_comum = vagas_filtradas['perfil_vaga_nivel_profissional'].mode()[0] \
             if not vagas_filtradas['perfil_vaga_nivel_profissional'].empty else "N/A"
-        st.metric(
-            label="Nível Profissional Mais Comum",
-            value=nivel_mais_comum
-        )
+        st.metric("Nível Profissional Mais Comum", nivel_mais_comum)
 
     with col3:
         estado_mais_comum = vagas_filtradas['perfil_vaga_estado'].mode()[0] \
             if not vagas_filtradas['perfil_vaga_estado'].empty else "N/A"
-        st.metric(
-            label="Estado Mais Comum",
-            value=estado_mais_comum
-        )
+        st.metric("Estado Mais Comum", estado_mais_comum)
 
-    style_metric_cards()
-
-    # Seção de visualização de dados
     st.markdown("### 📋 Detalhes das Vagas")
     st.dataframe(
         vagas_filtradas[[
@@ -98,14 +94,13 @@ def analise_vaga_03(vagas_df):
         use_container_width=True
     )
 
-    # Visualizações gráficas
     st.markdown("###  Análises Gráficas")
-    tab1, tab2, tab3 = st.tabs(
-        ["Distribuição por Estado", "Nível de Inglês", "Áreas de Atuação"])
+    tab1, tab2, tab3 = st.tabs([
+        "Distribuição por Estado", "Nível de Inglês", "Áreas de Atuação"
+    ])
 
     with tab1:
-        estado_df = vagas_filtradas['perfil_vaga_estado'].value_counts(
-        ).reset_index()
+        estado_df = vagas_filtradas['perfil_vaga_estado'].value_counts().reset_index()
         estado_df.columns = ['estado', 'quantidade']
 
         fig_estado = px.bar(
@@ -120,8 +115,7 @@ def analise_vaga_03(vagas_df):
         st.plotly_chart(fig_estado, use_container_width=True)
 
     with tab2:
-        ingles_df = vagas_filtradas['perfil_vaga_nivel_ingles'].value_counts(
-        ).reset_index()
+        ingles_df = vagas_filtradas['perfil_vaga_nivel_ingles'].value_counts().reset_index()
         ingles_df.columns = ['nivel_ingles', 'quantidade']
 
         fig_ingles = px.pie(
@@ -134,8 +128,7 @@ def analise_vaga_03(vagas_df):
         st.plotly_chart(fig_ingles, use_container_width=True)
 
     with tab3:
-        areas_df = vagas_filtradas['perfil_vaga_areas_atuacao'].value_counts(
-        ).reset_index()
+        areas_df = vagas_filtradas['perfil_vaga_areas_atuacao'].value_counts().reset_index()
         areas_df.columns = ['area', 'quantidade']
 
         fig_areas = px.treemap(
