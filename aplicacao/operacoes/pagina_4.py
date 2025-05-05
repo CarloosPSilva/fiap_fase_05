@@ -262,25 +262,26 @@ def analise_candidato_04(prospects_json):
         filtered_df = filtered_df[filtered_df['titulo_vaga'].isin(vaga_filtro)]
 
     # Tabela de candidatos
-    st.markdown("###  Lista de Candidatos")
     recrutador_df = filtered_df['recrutador'].value_counts().reset_index()
     recrutador_df.columns = ['recrutador', 'quantidade']
-    recrutador_df = recrutador_df.sort_values(by='quantidade', ascending=False).head(10)
+    recrutador_df = recrutador_df.sort_values(by='quantidade', ascending=True).head(10)
 
     if recrutador_df.empty or recrutador_df['quantidade'].sum() == 0:
         st.warning("Nenhum dado válido encontrado para o gráfico de recrutadores.")
     else:
         fig_recrutador = px.bar(
             recrutador_df,
-            x='recrutador',
-            y='quantidade',
-            labels={'recrutador': 'Recrutador', 'quantidade': 'Número de Candidatos'},
-            title='Distribuição por Recrutador',
+            x='quantidade',
+            y='recrutador',
+            orientation='h',
+            labels={'quantidade': 'Número de Candidatos', 'recrutador': 'Recrutador'},
+            title='Top 10 Recrutadores com Mais Candidatos',
             color='recrutador',
             height=500
         )
         fig_recrutador.update_layout(showlegend=False)
         st.plotly_chart(fig_recrutador, use_container_width=True)
+
     # Visualizações gráficas
     st.markdown("###  Análises Gráficas")
     tab1, tab2, tab3 = st.tabs(
