@@ -116,7 +116,7 @@ def predicao_1():
     with st.container():
         st.markdown("""
         <div class="header-container">
-            <h3 class="header-text"> Encontre as vagas perfeitas com inteligência artificial</h3>
+            <h2 class="header-text"> Encontre as vagas perfeitas com inteligência artificial</h2>
         </div>
         """, unsafe_allow_html=True)
 
