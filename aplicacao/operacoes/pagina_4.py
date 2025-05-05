@@ -41,10 +41,10 @@ def analise_candidato_04(prospects_json):
 
 
     # 🔒 Limitar para até 500 registros
-    MAX_REGISTROS = 500
-    if len(prospects_df) > MAX_REGISTROS:
-        prospects_df = prospects_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
-        st.info(f"Atenção: foram carregados apenas {MAX_REGISTROS} candidatos de um total maior, para otimizar a performance.")
+    # MAX_REGISTROS = 500
+    # if len(prospects_df) > MAX_REGISTROS:
+    #     prospects_df = prospects_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
+    #     st.info(f"Atenção: foram carregados apenas {MAX_REGISTROS} candidatos de um total maior, para otimizar a performance.")
 
     # Agrupar status de aprovação
     aprovados = [
@@ -111,7 +111,7 @@ def analise_candidato_04(prospects_json):
             'data_candidatura': 'Data Candidatura',
             'recrutador': 'Recrutador',
             'titulo_vaga': 'Vaga'
-        }).head(100).reset_index(drop=True),  # ✅ workaround
+        }).reset_index(drop=True),  # ✅ workaround
         height=400,
         use_container_width=True
     )
