@@ -276,10 +276,8 @@ def analise_candidato_04(prospects_json):
             'titulo_vaga': 'Vaga'
         }),
         height=400,
-        use_container_width=True,
-        hide_index=True
+        use_container_width=True
     )
-
     # Visualizações gráficas
     st.markdown("###  Análises Gráficas")
     tab1, tab2, tab3 = st.tabs(
