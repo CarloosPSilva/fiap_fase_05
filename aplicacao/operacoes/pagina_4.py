@@ -263,21 +263,24 @@ def analise_candidato_04(prospects_json):
 
     # Tabela de candidatos
     st.markdown("###  Lista de Candidatos")
-    st.dataframe(
-        filtered_df[[
-            'nome', 'codigo', 'situacao_candidado',
-            'data_candidatura', 'recrutador', 'titulo_vaga'
-        ]].rename(columns={
-            'nome': 'Nome',
-            'codigo': 'Código',
-            'situacao_candidado': 'Situação',
-            'data_candidatura': 'Data Candidatura',
-            'recrutador': 'Recrutador',
-            'titulo_vaga': 'Vaga'
-        }),
-        height=400,
-        use_container_width=True
-    )
+    recrutador_df = filtered_df['recrutador'].value_counts().reset_index()
+    recrutador_df.columns = ['recrutador', 'quantidade']
+    recrutador_df = recrutador_df.sort_values(by='quantidade', ascending=False).head(10)
+
+    if recrutador_df.empty or recrutador_df['quantidade'].sum() == 0:
+        st.warning("Nenhum dado válido encontrado para o gráfico de recrutadores.")
+    else:
+        fig_recrutador = px.bar(
+            recrutador_df,
+            x='recrutador',
+            y='quantidade',
+            labels={'recrutador': 'Recrutador', 'quantidade': 'Número de Candidatos'},
+            title='Distribuição por Recrutador',
+            color='recrutador',
+            height=500
+        )
+        fig_recrutador.update_layout(showlegend=False)
+        st.plotly_chart(fig_recrutador, use_container_width=True)
     # Visualizações gráficas
     st.markdown("###  Análises Gráficas")
     tab1, tab2, tab3 = st.tabs(
