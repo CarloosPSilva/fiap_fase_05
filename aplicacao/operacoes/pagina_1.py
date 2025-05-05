@@ -102,175 +102,181 @@ def extract_text_from_pdf(file):
 
 
 def predicao_1():
-        # Header moderno
-        with st.container():
+    # Inicialização segura dos estados usados
+    if 'cv_text' not in st.session_state:
+        st.session_state['cv_text'] = ""
+
+    if 'df_recomendacoes' not in st.session_state:
+        st.session_state['df_recomendacoes'] = pd.DataFrame()
+    # Header moderno
+    with st.container():
+        st.markdown("""
+        <div class="header-container">
+            <h3 class="header-text"> Encontre as vagas perfeitas com inteligência artificial</h3>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Seção de upload
+    with st.container():
+        st.markdown("####  Envie seu currículo")
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            uploaded_file = st.file_uploader(
+                "Arraste e solte seu arquivo PDF aqui ou clique para selecionar",
+                type=["pdf"],
+                label_visibility="visible"
+            )
+        with col2:
             st.markdown("""
-            <div class="header-container">
-                <h3 class="header-text"> Encontre as vagas perfeitas com inteligência artificial</h3>
+            <div style="background-color: #e3f2fd; padding: 1rem; border-radius: 10px;">
+                <p style="margin: 0; font-size: 0.9rem; color: black;">
+                    📌 <strong>Dica:</strong> Seu currículo deve estar em formato PDF e conter informações claras sobre suas habilidades e experiências.
+                </p>
             </div>
             """, unsafe_allow_html=True)
 
-        # Seção de upload
-        with st.container():
-            st.markdown("####  Envie seu currículo")
-            col1, col2 = st.columns([3, 1])
-            with col1:
-                uploaded_file = st.file_uploader(
-                    "Arraste e solte seu arquivo PDF aqui ou clique para selecionar",
-                    type=["pdf"],
-                    label_visibility="visible"
-                )
-            with col2:
-                st.markdown("""
-                <div style="background-color: #e3f2fd; padding: 1rem; border-radius: 10px;">
-                    <p style="margin: 0; font-size: 0.9rem; color: black;">
-                        📌 <strong>Dica:</strong> Seu currículo deve estar em formato PDF e conter informações claras sobre suas habilidades e experiências.
-                    </p>
+    if uploaded_file:
+        with st.spinner('Analisando seu currículo...'):
+            cv_text = extract_text_from_pdf(uploaded_file)
+
+            if not cv_text.strip():
+                st.error("""
+                <div style="background-color: #ffebee; padding: 1rem; border-left: 5px solid #f44336; border-radius: 5px;">
+                    ⚠️ Não foi possível extrair texto do PDF. Verifique se o arquivo não está vazio ou protegido.
                 </div>
                 """, unsafe_allow_html=True)
+                return
 
-        if uploaded_file:
-            with st.spinner('Analisando seu currículo...'):
-                cv_text = extract_text_from_pdf(uploaded_file)
+            df_recomendacoes = predict_jobs_for_cv(cv_text)
 
-                if not cv_text.strip():
-                    st.error("""
-                    <div style="background-color: #ffebee; padding: 1rem; border-left: 5px solid #f44336; border-radius: 5px;">
-                        ⚠️ Não foi possível extrair texto do PDF. Verifique se o arquivo não está vazio ou protegido.
-                    </div>
-                    """, unsafe_allow_html=True)
-                    return
+            # Salvar em sessão
+            st.session_state['cv_text'] = cv_text
+            st.session_state['df_recomendacoes'] = df_recomendacoes
 
-                df_recomendacoes = predict_jobs_for_cv(cv_text)
+    # Exibe resultados se já estiverem no session_state
+    if 'df_recomendacoes' in st.session_state:
+        df_recomendacoes = st.session_state['df_recomendacoes']
 
-                # Salvar em sessão
-                st.session_state['cv_text'] = cv_text
-                st.session_state['df_recomendacoes'] = df_recomendacoes
+        st.markdown("""
+        <div class="success-box">
+            ✅ Análise concluída com sucesso! Veja abaixo as vagas que melhor se encaixam no seu perfil.
+        </div>
+        """, unsafe_allow_html=True)
 
-        # Exibe resultados se já estiverem no session_state
-        if 'df_recomendacoes' in st.session_state:
-            df_recomendacoes = st.session_state['df_recomendacoes']
+        st.markdown("---")
 
-            st.markdown("""
-            <div class="success-box">
-                ✅ Análise concluída com sucesso! Veja abaixo as vagas que melhor se encaixam no seu perfil.
-            </div>
-            """, unsafe_allow_html=True)
+        # Métricas resumidas
+        st.markdown("###  Resultados da Análise")
+        col1, col2, col3 = st.columns(3)
 
-            st.markdown("---")
+        with col1:
+            avg_prob = df_recomendacoes["probabilidade_de_contratacao"].mean()
+            st.markdown("""<div style="background-color: #e3f2fd; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 5px;">
+                <p style="margin: 0; font-size: 0.9rem; color: black;">📈 <strong>Probabilidade Média</strong></p>
+            </div>""", unsafe_allow_html=True)
+            st.metric(label="", value=f"{avg_prob:.1%}")
 
-            # Métricas resumidas
-            st.markdown("###  Resultados da Análise")
-            col1, col2, col3 = st.columns(3)
+        with col2:
+            best_match = df_recomendacoes["similaridade"].max()
+            st.markdown("""<div style="background-color: #e3f2fd; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 5px;">
+                <p style="margin: 0; font-size: 0.9rem; color: black;">🔍 <strong>Melhor Match</strong></p>
+            </div>""", unsafe_allow_html=True)
+            st.metric(label="", value=f"{best_match:.1%}")
 
-            with col1:
-                avg_prob = df_recomendacoes["probabilidade_de_contratacao"].mean()
-                st.markdown("""<div style="background-color: #e3f2fd; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 5px;">
-                    <p style="margin: 0; font-size: 0.9rem; color: black;">📈 <strong>Probabilidade Média</strong></p>
-                </div>""", unsafe_allow_html=True)
-                st.metric(label="", value=f"{avg_prob:.1%}")
+        with col3:
+            top_area = df_recomendacoes["area"].mode()[0]
+            st.markdown("""<div style="background-color: #e3f2fd; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 5px;">
+                <p style="margin: 0; font-size: 0.9rem; color: black;">🧭 <strong>Área com Mais Oportunidades</strong></p>
+            </div>""", unsafe_allow_html=True)
+            st.metric(label="", value=top_area)
 
-            with col2:
-                best_match = df_recomendacoes["similaridade"].max()
-                st.markdown("""<div style="background-color: #e3f2fd; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 5px;">
-                    <p style="margin: 0; font-size: 0.9rem; color: black;">🔍 <strong>Melhor Match</strong></p>
-                </div>""", unsafe_allow_html=True)
-                st.metric(label="", value=f"{best_match:.1%}")
+        style_metric_cards()
 
-            with col3:
-                top_area = df_recomendacoes["area"].mode()[0]
-                st.markdown("""<div style="background-color: #e3f2fd; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 5px;">
-                    <p style="margin: 0; font-size: 0.9rem; color: black;">🧭 <strong>Área com Mais Oportunidades</strong></p>
-                </div>""", unsafe_allow_html=True)
-                st.metric(label="", value=top_area)
+        # Top vagas
+        st.markdown("### 🏆 Vagas Recomendadas")
 
-            style_metric_cards()
+        # Formatar dataframe
+        df_display = df_recomendacoes[[
+            "titulo_da_vaga", "area", "probabilidade_de_contratacao", "similaridade"
+        ]].rename(columns={
+            "titulo_da_vaga": "Vaga",
+            "area": "Área",
+            "probabilidade_de_contratacao": "Probabilidade",
+            "similaridade": "Match"
+        })
 
-            # Top vagas
-            st.markdown("### 🏆 Vagas Recomendadas")
+        # Garante que os dados estão como float
+        df_display["Probabilidade"] = pd.to_numeric(
+            df_display["Probabilidade"], errors='coerce')
+        df_display["Match"] = pd.to_numeric(
+            df_display["Match"], errors='coerce')
 
-            # Formatar dataframe
-            df_display = df_recomendacoes[[
-                "titulo_da_vaga", "area", "probabilidade_de_contratacao", "similaridade"
-            ]].rename(columns={
-                "titulo_da_vaga": "Vaga",
-                "area": "Área",
-                "probabilidade_de_contratacao": "Probabilidade",
-                "similaridade": "Match"
-            })
+        # Exibe sem gradiente de cores
+        st.dataframe(
+            df_display.style
+            .format({"Probabilidade": "{:.1%}", "Match": "{:.1%}"})
+            .set_properties(**{'text-align': 'left'})
+            .set_table_styles([{
+                'selector': 'th',
+                'props': [('background-color', 'var(--primary-color)'),
+                            ('color', 'white'),
+                            ('font-weight', 'bold')]
+            }]),
+            use_container_width=True,
+            height=250
+        )
 
-            # Garante que os dados estão como float
-            df_display["Probabilidade"] = pd.to_numeric(
-                df_display["Probabilidade"], errors='coerce')
-            df_display["Match"] = pd.to_numeric(
-                df_display["Match"], errors='coerce')
+        # Detalhes das vagas
+        st.markdown("---")
+        st.markdown("###  Detalhes das Vagas Recomendadas")
 
-            # Exibe sem gradiente de cores
-            st.dataframe(
-                df_display.style
-                .format({"Probabilidade": "{:.1%}", "Match": "{:.1%}"})
-                .set_properties(**{'text-align': 'left'})
-                .set_table_styles([{
-                    'selector': 'th',
-                    'props': [('background-color', 'var(--primary-color)'),
-                              ('color', 'white'),
-                              ('font-weight', 'bold')]
-                }]),
-                use_container_width=True,
-                height=250
-            )
+        tabs = st.tabs(
+            [f"Vaga #{i+1}" for i in range(len(df_recomendacoes))])
 
-            # Detalhes das vagas
-            st.markdown("---")
-            st.markdown("###  Detalhes das Vagas Recomendadas")
+        for idx, (tab, (_, row)) in enumerate(zip(tabs, df_recomendacoes.iterrows())):
+            with tab:
+                st.markdown(f"#### {row['titulo_da_vaga']}")
 
-            tabs = st.tabs(
-                [f"Vaga #{i+1}" for i in range(len(df_recomendacoes))])
+                # Barra de progresso para visualização
+                col_prob, col_sim = st.columns(2)
+                with col_prob:
+                    st.progress(
+                        int(row['probabilidade_de_contratacao'] * 100))
+                    st.caption(
+                        f"Probabilidade: {row['probabilidade_de_contratacao']:.1%}")
 
-            for idx, (tab, (_, row)) in enumerate(zip(tabs, df_recomendacoes.iterrows())):
-                with tab:
-                    st.markdown(f"#### {row['titulo_da_vaga']}")
+                with col_sim:
+                    st.progress(int(row['similaridade'] * 100))
+                    st.caption(f"Match: {row['similaridade']:.1%}")
 
-                    # Barra de progresso para visualização
-                    col_prob, col_sim = st.columns(2)
-                    with col_prob:
-                        st.progress(
-                            int(row['probabilidade_de_contratacao'] * 100))
-                        st.caption(
-                            f"Probabilidade: {row['probabilidade_de_contratacao']:.1%}")
+                st.markdown("---")
 
-                    with col_sim:
-                        st.progress(int(row['similaridade'] * 100))
-                        st.caption(f"Match: {row['similaridade']:.1%}")
+                # Layout em colunas para informações básicas
+                col_info1, col_info2 = st.columns(2)
+                with col_info1:
+                    st.markdown(f"**Área:** {row['area']}")
+                    st.markdown(f"**ID da Vaga:** `{row['id_vaga']}`")
 
-                    st.markdown("---")
+                with col_info2:
+                    st.markdown(
+                        f"**Localização:** {jobs.get(row['id_vaga'], {}).get('informacoes_basicas', {}).get('local_de_trabalho', 'Não informado')}")
+                    st.markdown(
+                        f"**Tipo de Contratação:** {jobs.get(row['id_vaga'], {}).get('informacoes_basicas', {}).get('tipo_de_contratacao', 'Não informado')}")
 
-                    # Layout em colunas para informações básicas
-                    col_info1, col_info2 = st.columns(2)
-                    with col_info1:
-                        st.markdown(f"**Área:** {row['area']}")
-                        st.markdown(f"**ID da Vaga:** `{row['id_vaga']}`")
+                # Seções expansíveis
+                with st.expander("🛠 **Habilidades Requeridas**", expanded=False):
+                    st.write(row['habilidades'] if row['habilidades'] !=
+                                "Não informado" else "Informações não disponíveis para esta vaga.")
 
-                    with col_info2:
-                        st.markdown(
-                            f"**Localização:** {jobs.get(row['id_vaga'], {}).get('informacoes_basicas', {}).get('local_de_trabalho', 'Não informado')}")
-                        st.markdown(
-                            f"**Tipo de Contratação:** {jobs.get(row['id_vaga'], {}).get('informacoes_basicas', {}).get('tipo_de_contratacao', 'Não informado')}")
+                with st.expander("📝 **Principais Atividades**", expanded=False):
+                    st.write(row['atividades'] if row['atividades'] !=
+                                "Não informado" else "Informações não disponíveis para esta vaga.")
 
-                    # Seções expansíveis
-                    with st.expander("🛠 **Habilidades Requeridas**", expanded=False):
-                        st.write(row['habilidades'] if row['habilidades'] !=
-                                 "Não informado" else "Informações não disponíveis para esta vaga.")
-
-                    with st.expander("📝 **Principais Atividades**", expanded=False):
-                        st.write(row['atividades'] if row['atividades'] !=
-                                 "Não informado" else "Informações não disponíveis para esta vaga.")
-
-                    with st.expander("ℹ️ **Informações Adicionais**", expanded=False):
-                        job_info = jobs.get(row['id_vaga'], {})
-                        st.markdown(
-                            f"**Empresa:** {job_info.get('informacoes_basicas', {}).get('empresa', 'Não informado')}")
-                        st.markdown(
-                            f"**Nível:** {job_info.get('perfil_vaga', {}).get('nivel', 'Não informado')}")
-                        st.markdown(
-                            f"**Formação:** {job_info.get('perfil_vaga', {}).get('formacao', 'Não informado')}")
+                with st.expander("ℹ️ **Informações Adicionais**", expanded=False):
+                    job_info = jobs.get(row['id_vaga'], {})
+                    st.markdown(
+                        f"**Empresa:** {job_info.get('informacoes_basicas', {}).get('empresa', 'Não informado')}")
+                    st.markdown(
+                        f"**Nível:** {job_info.get('perfil_vaga', {}).get('nivel', 'Não informado')}")
+                    st.markdown(
+                        f"**Formação:** {job_info.get('perfil_vaga', {}).get('formacao', 'Não informado')}")
