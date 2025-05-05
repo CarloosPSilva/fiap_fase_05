@@ -262,22 +262,23 @@ def analise_candidato_04(prospects_json):
         filtered_df = filtered_df[filtered_df['titulo_vaga'].isin(vaga_filtro)]
 
     # Tabela de candidatos
-    recrutador_df = filtered_df['recrutador'].value_counts().reset_index()
-    recrutador_df.columns = ['recrutador', 'quantidade']
-    recrutador_df = recrutador_df.sort_values(by='quantidade', ascending=False).head(10)
-
-    if recrutador_df.empty or recrutador_df['quantidade'].sum() == 0:
-        st.warning("Nenhum dado válido encontrado para o gráfico de recrutadores.")
-    else:
-        fig_recrutador_pizza = px.pie(
-            recrutador_df,
-            names='recrutador',
-            values='quantidade',
-            title='Top 10 Recrutadores com Mais Candidatos',
-            hole=0.3,
-            color_discrete_sequence=px.colors.qualitative.Set3
-        )
-        st.plotly_chart(fig_recrutador_pizza, use_container_width=True)
+    st.markdown("###  Lista de Candidatos")
+    st.dataframe(
+        filtered_df[[
+            'nome', 'codigo', 'situacao_candidado',
+            'data_candidatura', 'recrutador', 'titulo_vaga'
+        ]].rename(columns={
+            'nome': 'Nome',
+            'codigo': 'Código',
+            'situacao_candidado': 'Situação',
+            'data_candidatura': 'Data Candidatura',
+            'recrutador': 'Recrutador',
+            'titulo_vaga': 'Vaga'
+        }),
+        height=400,
+        use_container_width=True,
+        hide_index=True
+    )
 
     # Visualizações gráficas
     st.markdown("###  Análises Gráficas")
