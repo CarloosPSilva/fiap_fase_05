@@ -111,10 +111,9 @@ def analise_candidato_04(prospects_json):
             'data_candidatura': 'Data Candidatura',
             'recrutador': 'Recrutador',
             'titulo_vaga': 'Vaga'
-        }).head(100),
+        }).head(100).reset_index(drop=True),  # ✅ workaround
         height=400,
-        use_container_width=True,
-        hide_index=True
+        use_container_width=True
     )
 
     # Visualizações gráficas

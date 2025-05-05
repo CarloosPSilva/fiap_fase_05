@@ -1,7 +1,7 @@
 from PIL import Image
 import streamlit as st
 import sys
-
+st.set_page_config(page_title="MVP IA - Recrutamento Decision", layout="wide")
 from aplicacao.operacoes.pagina_1 import predicao_1
 from aplicacao.operacoes.pagina_2 import visao_geral_02
 from aplicacao.operacoes.pagina_3 import analise_vaga_03
@@ -14,7 +14,7 @@ from aplicacao.utils.utils import style
 sys.modules["torch.classes"] = None
 
 # Configuração da página
-st.set_page_config(page_title="MVP IA - Recrutamento Decision", layout="wide")
+
 
 # Estilo global
 style()

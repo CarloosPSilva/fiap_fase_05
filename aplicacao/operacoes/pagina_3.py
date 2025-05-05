@@ -8,30 +8,7 @@ def analise_vaga_03(vagas_df):
     # Estilo local para cards do st.metric
     style_metric_cards()
 
-    # Ajuste visual dos cards para tema claro e escuro
-    # st.markdown("""
-    # <style>
-    # @media (prefers-color-scheme: dark) {
-    #     div[data-testid="stMetric"] {
-    #         background-color: #2C2C2C !important;
-    #         border-radius: 0.5rem;
-    #         padding: 1rem;
-    #         box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
-    #         border: 1px solid #444;
-    #     }
-    # }
 
-    # @media (prefers-color-scheme: light) {
-    #     div[data-testid="stMetric"] {
-    #         background-color: #FFFFFF !important;
-    #         border-radius: 0.5rem;
-    #         padding: 1rem;
-    #         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    #         border: 1px solid #DDD;
-    #     }
-    # }
-    # </style>
-    # """, unsafe_allow_html=True)
 
     with st.expander(" Filtros Avançados", expanded=True):
         col1, col2 = st.columns(2)
