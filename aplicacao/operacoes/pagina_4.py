@@ -121,16 +121,31 @@ def analise_candidato_04(prospects_json):
         st.plotly_chart(fig_status, use_container_width=True)
 
     with tab2:
-        recrutador_df = filtered_df['recrutador'].value_counts().nlargest(10).reset_index()
-        recrutador_df.columns = ['recrutador', 'quantidade']
-        fig_recrutador = px.bar(
-            recrutador_df, x='recrutador', y='quantidade',
-            title='Top 10 Recrutadores com Mais Candidatos',
-            labels={'recrutador': 'Recrutador', 'quantidade': 'Número de Candidatos'},
-            color='recrutador'
-        )
-        fig_recrutador.update_layout(showlegend=False)
-        st.plotly_chart(fig_recrutador, use_container_width=True)
+        if 'recrutador' in filtered_df.columns and not filtered_df['recrutador'].isna().all():
+            recrutador_df = (
+                filtered_df['recrutador']
+                .dropna()
+                .value_counts()
+                .nlargest(10)
+                .reset_index()
+            )
+            recrutador_df.columns = ['recrutador', 'quantidade']
+
+            if not recrutador_df.empty:
+                fig_recrutador = px.bar(
+                    recrutador_df,
+                    x='recrutador',
+                    y='quantidade',
+                    title='Top 10 Recrutadores com Mais Candidatos',
+                    labels={'recrutador': 'Recrutador', 'quantidade': 'Número de Candidatos'},
+                    color='recrutador'
+                )
+                fig_recrutador.update_layout(showlegend=False)
+                st.plotly_chart(fig_recrutador, use_container_width=True)
+            else:
+                st.warning("⚠️ Nenhum dado válido de recrutador para exibir o gráfico.")
+        else:
+            st.warning("⚠️ Coluna 'recrutador' ausente ou vazia.")
 
     with tab3:
         if not filtered_df.empty and filtered_df['data_candidatura'].notna().sum() >= 5:

@@ -20,9 +20,13 @@ def style():
                 color: #1D2226;
             }
 
-            .stApp h1, .stApp h2, .stApp h3 {
+            .stApp h1, .stApp h2 {
                 color: #0A66C2 !important;
                 text-align: center !important;
+            }
+            .stApp h3 {
+                color: #0A66C2 !important;
+
             }
 
             .stDataFrame td, .stDataFrame th {
@@ -66,9 +70,13 @@ def style():
                 color: white !important;
             }
 
-            .stApp h1, .stApp h2, .stApp h3 {
+            .stApp h1, .stApp h2{
                 color: #60AFFF !important;
                 text-align: center !important;
+            }
+            .stApp h3 {
+                color: #0A66C2 !important;
+
             }
 
             .stDataFrame td, .stDataFrame th {

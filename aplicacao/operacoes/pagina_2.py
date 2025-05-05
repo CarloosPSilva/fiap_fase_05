@@ -1,11 +1,15 @@
 import streamlit as st
 
-
 def visao_geral_02():
-    st.title("Visao Geral do Projeto")
+    st.title(" Visão Geral do Projeto")
 
-    st.markdown('<div class="left-align-header">🎯 Objetivo do Projeto</div>',
-                unsafe_allow_html=True)
+    def styled_subheader(titulo):
+        st.markdown(
+            f"""<h3 style="margin-top: 1.5em; margin-bottom: 0.5em; font-weight: bold; color: #003366; text-align: left;">{titulo}</h3>""",
+            unsafe_allow_html=True
+        )
+
+    styled_subheader("🎯 Objetivo do Projeto")
     st.markdown("""
     Este projeto tem como objetivo aplicar **Inteligência Artificial** para **otimizar o processo de recrutamento** da empresa **Decision**.
 
@@ -15,16 +19,14 @@ def visao_geral_02():
     - Explorar padrões e agrupamentos nos perfis de candidatos e vagas
     """)
 
-    st.markdown('<div class="left-align-header">🧪 Estratégia da Solução</div>',
-                unsafe_allow_html=True)
+    styled_subheader("🧪 Estratégia da Solução")
     st.markdown("""
     A solução foi dividida em duas frentes principais:
     - **Predição de Aprovação (Página 1):** o usuário envia seu currículo em PDF, e o sistema recomenda as 5 vagas com maior similaridade e probabilidade de contratação.
     - **Exploração dos Dados Históricos (Páginas 2 a 6):** análise das vagas, candidatos, clusters e recomendações com base no histórico de contratações.
     """)
 
-    st.markdown('<div class="left-align-header">📂 Bases de Dados Utilizadas</div>',
-                unsafe_allow_html=True)
+    styled_subheader("📂 Bases de Dados Utilizadas")
     st.markdown("""
     Os dados utilizados são amostras fornecidas pela Decision:
     - `vagas.json`: Informações detalhadas sobre cada vaga
@@ -32,8 +34,7 @@ def visao_geral_02():
     - `applicants.json`: Perfil completo dos candidatos (formação, idiomas, skills, localidade, remuneração)
     """)
 
-    st.markdown('<div class="left-align-header">🧠 Tecnologias e Modelos</div>',
-                unsafe_allow_html=True)
+    styled_subheader("🧠 Tecnologias e Modelos")
     st.markdown("""
     - **Streamlit:** Interface interativa do MVP
     - **Pandas & JSON:** Tratamento e exploração dos dados
@@ -42,8 +43,7 @@ def visao_geral_02():
     - **Scikit-learn + Plotly:** Análise estatística, clusterização e visualizações
     """)
 
-    st.markdown('<div class="left-align-header">🗺️ Como Navegar no MVP</div>',
-                unsafe_allow_html=True)
+    styled_subheader("🗺️ Como Navegar no MVP")
     st.markdown("""
     Use o menu lateral para explorar cada parte do MVP:
 
