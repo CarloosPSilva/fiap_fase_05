@@ -27,7 +27,7 @@ def visao_geral_02():
     st.markdown("""
     A solução foi dividida em duas frentes principais:
     - **Predição de Aprovação (Página 1):** o usuário envia seu currículo em PDF, e o sistema recomenda as 5 vagas com maior similaridade e probabilidade de contratação.
-    - **Exploração dos Dados Históricos (Páginas 2 a 6):** análise das vagas, candidatos, clusters e recomendações com base no histórico de contratações.
+    - **Exploração dos Dados Históricos (Páginas 2 a 4):** análise das vagas, candidatos, clusters e recomendações com base no histórico de contratações.
 
     ---
     """)

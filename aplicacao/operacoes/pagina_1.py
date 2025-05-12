@@ -114,6 +114,8 @@ def predicao_1():
 
     # Header moderno
     with st.container():
+
+
         st.markdown("""
         <div class="header-container">
             <h2 class="header-text">Encontre as melhores oportunidades com base no seu currículo e trajetória profissional.</h2>
