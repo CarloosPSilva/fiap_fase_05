@@ -116,7 +116,7 @@ def predicao_1():
     with st.container():
         st.markdown("""
         <div class="header-container">
-            <h2 class="header-text"> Encontre as vagas perfeitas com inteligência artificial</h2>
+            <h2 class="header-text">Encontre as melhores oportunidades com base no seu currículo e trajetória profissional.</h2>
         </div>
         """, unsafe_allow_html=True)
 
@@ -182,7 +182,7 @@ def predicao_1():
     if isinstance(df_recomendacoes, pd.DataFrame) and not df_recomendacoes.empty:
         st.markdown("""
         <div class="success-box">
-            ✅ Análise concluída com sucesso! Veja abaixo as vagas que melhor se encaixam no seu perfil.
+             Análise concluída com sucesso! Veja abaixo as vagas que melhor se encaixam no seu perfil.
         </div>
         """, unsafe_allow_html=True)
 
@@ -191,18 +191,18 @@ def predicao_1():
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            st.metric("📈 Probabilidade Média", f"{df_recomendacoes['probabilidade_de_contratacao'].mean():.1%}")
+            st.metric("Probabilidade Média", f"{df_recomendacoes['probabilidade_de_contratacao'].mean():.1%}")
 
         with col2:
-            st.metric("🔍 Melhor Match", f"{df_recomendacoes['similaridade'].max():.1%}")
+            st.metric("Melhor Match", f"{df_recomendacoes['similaridade'].max():.1%}")
 
         with col3:
-            st.metric("🧭 Área com Mais Oportunidades", df_recomendacoes["area"].mode()[0])
+            st.metric("Área com Mais Oportunidades", df_recomendacoes["area"].mode()[0])
 
         style_metric_cards()
 
         # Top vagas
-        st.markdown("### 🏆 Vagas Recomendadas")
+        st.markdown("###  Vagas Recomendadas")
 
         df_display = df_recomendacoes[[
             "titulo_da_vaga", "area", "probabilidade_de_contratacao", "similaridade"

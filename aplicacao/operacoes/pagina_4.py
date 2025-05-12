@@ -63,7 +63,7 @@ def analise_candidato_04(prospects_json):
     style_metric_cards()
 
     # Filtros interativos
-    with st.expander("🔍 Filtros Avançados", expanded=True):
+    with st.expander("Filtros Avançados", expanded=True):
         col1, col2, col3 = st.columns(3)
 
         with col1:

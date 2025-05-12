@@ -28,10 +28,10 @@ st.title("MVP Inteligência Artificial para Recrutamento - Decision")
 
 # Menu lateral
 pagina = st.sidebar.selectbox("Selecione a página: ", [
-    "🔍 1. Predição de Aprovação",
-    "📊 2. Visão Geral",
-    "📌 3. Análise de Vagas",
-    "🧑‍💼 4. Análise de Candidatos"
+    "1. Predição de Aprovação",
+    "2. Visão Geral",
+    "3. Análise de Vagas",
+    "4. Análise de Candidatos"
 ], key="menu_principal")
 
 
@@ -44,16 +44,16 @@ def carregar_dados():
 try:
     vagas_df, prospects_df, prospects_json = carregar_dados()
 
-    if pagina == "🔍 1. Predição de Aprovação":
+    if pagina == "1. Predição de Aprovação":
         predicao_1()
 
-    elif pagina == "📊 2. Visão Geral":
+    elif pagina == "2. Visão Geral":
         visao_geral_02()
 
-    elif pagina == "📌 3. Análise de Vagas":
+    elif pagina == "3. Análise de Vagas":
         analise_vaga_03(vagas_df)
 
-    elif pagina == "🧑‍💼 4. Análise de Candidatos":
+    elif pagina == "4. Análise de Candidatos":
         analise_candidato_04(prospects_json)
 
 except Exception as e:
@@ -62,4 +62,4 @@ except Exception as e:
 
 # Rodapé
 st.sidebar.markdown("---")
-st.sidebar.markdown("👨‍💻 **Desenvolvido por Carlos Pereira Silva**")
+st.sidebar.markdown("**Desenvolvido por Carlos Pereira Silva**")

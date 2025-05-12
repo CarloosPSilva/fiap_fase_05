@@ -52,7 +52,7 @@ def analise_vaga_03(vagas_df):
             if not vagas_filtradas['perfil_vaga_estado'].empty else "N/A"
         st.metric("Estado Mais Comum", estado_mais_comum)
 
-    st.markdown("### 📋 Detalhes das Vagas")
+    st.markdown("### Detalhes das Vagas")
     st.dataframe(
         vagas_filtradas[[
             'informacoes_basicas_titulo_vaga',

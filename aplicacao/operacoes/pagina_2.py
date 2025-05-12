@@ -11,7 +11,7 @@ def visao_geral_02():
     st.markdown("""
     ---
     """)
-    styled_subheader("🎯 Objetivo do Projeto")
+    styled_subheader("Objetivo do Projeto")
     st.markdown("""
     Este projeto tem como objetivo aplicar **Inteligência Artificial** para **otimizar o processo de recrutamento** da empresa **Decision**.
 
@@ -23,7 +23,7 @@ def visao_geral_02():
     ---
     """)
 
-    styled_subheader("🧪 Estratégia da Solução")
+    styled_subheader("Estratégia da Solução")
     st.markdown("""
     A solução foi dividida em duas frentes principais:
     - **Predição de Aprovação (Página 1):** o usuário envia seu currículo em PDF, e o sistema recomenda as 5 vagas com maior similaridade e probabilidade de contratação.
@@ -32,7 +32,7 @@ def visao_geral_02():
     ---
     """)
 
-    styled_subheader("📂 Bases de Dados Utilizadas")
+    styled_subheader("Bases de Dados Utilizadas")
     st.markdown("""
     Os dados utilizados são amostras fornecidas pela Decision:
     - `vagas.json`: Informações detalhadas sobre cada vaga
@@ -42,7 +42,7 @@ def visao_geral_02():
    ---
     """)
 
-    styled_subheader("🧠 Tecnologias e Modelos")
+    styled_subheader("Tecnologias e Modelos")
     st.markdown("""
     - **Streamlit:** Interface interativa do MVP
     - **Pandas & JSON:** Tratamento e exploração dos dados
@@ -54,14 +54,14 @@ def visao_geral_02():
     """
     )
 
-    styled_subheader("🗺️ Como Navegar no MVP")
+    styled_subheader("Como Navegar no MVP")
     st.markdown("""
     Use o menu lateral para explorar cada parte do MVP:
 
-    - 🔍 **Página 1:** Envie seu currículo em PDF e veja as vagas mais compatíveis com base em IA
-    - 📊 **Página 2:** Visão geral estatística das vagas
-    - 🧑‍💼 **Página 3:** Perfil dos candidatos recebidos
-    - 📈 **Página 4:** Recomendação e insights baseados no histórico de aprovações
+    - **Página 1:** Envie seu currículo em PDF e veja as vagas mais compatíveis com base em IA
+    - **Página 2:** Visão geral estatística das vagas
+    - **Página 3:** Perfil dos candidatos recebidos
+    - **Página 4:** Recomendação e insights baseados no histórico de aprovações
 
     ---
     Desenvolvido com foco em aplicabilidade real e geração de valor para recrutamento inteligente.
