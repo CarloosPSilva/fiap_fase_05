@@ -91,36 +91,3 @@ def preparar_candidatos_df(prospects_json=None, vagas_df=None, prospects_df=None
     )
 
     return vagas_df, prospects_df, prospects_json
-
-# def clusterizar_candidatos(candidatos_df):
-#     # ✅ Filtrar candidatos com dados válidos
-#     candidatos_df = candidatos_df[
-#         (candidatos_df['nivel_academico'] != 'Não informado') &
-#         (candidatos_df['nivel_ingles'] != 'Nenhum') &
-#         (candidatos_df['nivel_espanhol'] != 'Nenhum')
-#     ].dropna(subset=['remuneracao'])
-
-#     # 🔒 Amostragem para performance
-#     MAX_REGISTROS = 75
-#     if len(candidatos_df) > MAX_REGISTROS:
-#         candidatos_df = candidatos_df.sample(n=MAX_REGISTROS, random_state=42).reset_index(drop=True)
-
-#     try:
-#         # Base para cluster
-#         df_cluster = candidatos_df[['codigo', 'nivel_academico', 'nivel_ingles', 'nivel_espanhol', 'remuneracao']].copy()
-
-#         df_dummies = pd.get_dummies(df_cluster.drop(columns=['codigo', 'remuneracao']), drop_first=True)
-#         df_final = pd.concat([df_dummies, df_cluster[['remuneracao']]], axis=1)
-#         X_scaled = (df_final - df_final.mean()) / df_final.std()
-
-#         kmeans = KMeans(n_clusters=3, random_state=42, n_init='auto')
-#         df_cluster['cluster'] = kmeans.fit_predict(X_scaled)
-
-#         # Merge no original
-#         candidatos_df = candidatos_df.merge(df_cluster[['codigo', 'cluster']], on='codigo', how='left')
-
-#     except Exception as e:
-#         st.error(f"Erro durante a clusterização: {e}")
-#         return pd.DataFrame()
-
-#     return candidatos_df

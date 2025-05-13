@@ -13,7 +13,7 @@ def garantir_dados_extraidos():
 
     with zipfile.ZipFile(caminho_zip, 'r') as zip_ref:
         zip_ref.extractall('aplicacao')
-    print("📦 Arquivos de dados extraídos com sucesso.")
+    print("Arquivos de dados extraídos com sucesso.")
 
 
 def carregar_base():
@@ -63,5 +63,5 @@ def carregar_base():
     # Apenas retorna o JSON, o DataFrame não é mais necessário se não for usado
     applicants_df = pd.DataFrame()  # Placeholder vazio, se não utilizado
 
-    # ✅ Retorno completo e compatível com `preparar_candidatos_df()`
+    #  Retorno completo e compatível com `preparar_candidatos_df()`
     return vagas_df, prospects_df, applicants_df, prospects_json, applicants_json
